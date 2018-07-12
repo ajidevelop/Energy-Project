@@ -7,10 +7,10 @@ ph = PasswordHasher()
 
 def connectdb():
     # Connect to the database
-    connection = pymysql.connect(host='127.0.0.1',
+    connection = pymysql.connect(host='GOSHEN-SPECTRE',
                                  port=3307,
-                                 user='root',
-                                 password='root',
+                                 user='python',
+                                 password='pyth0n_@ccess',
                                  db='db',
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor,
