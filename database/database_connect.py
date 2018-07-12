@@ -1,5 +1,5 @@
 import pymysql.cursors
-import EnergyProject.User.email_verification as ev
+import User.email_verification as ev
 from argon2 import exceptions as e
 from argon2 import PasswordHasher
 ph = PasswordHasher()

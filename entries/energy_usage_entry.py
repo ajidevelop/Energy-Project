@@ -1,6 +1,6 @@
 __author__ = 'DanielAjisafe'
-import EnergyProject.database.database_connect as dc
-import EnergyProject.User.login as login
+import database.database_connect as dc
+import User.login as login
 
 
 def new_day_entry(date, d_usage_input):

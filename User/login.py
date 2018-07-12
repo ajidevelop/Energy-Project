@@ -1,7 +1,7 @@
 __author__ = 'DanielAjisafe'
 
-import EnergyProject.database.database_connect as dc
-import EnergyProject.User.email_verification as ev
+import database.database_connect as dc
+import User.email_verification as ev
 import pymysql.err as error
 import sys
 from argon2 import PasswordHasher

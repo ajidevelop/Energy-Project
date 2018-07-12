@@ -1,5 +1,5 @@
 __author__ = 'DanielAjisafe'
-import EnergyProject.database.database_connect as dc
+import database.database_connect as dc
 # import smtplib
 # from email.mime.multipart import MIMEMultipart
 # from email.mime.text import MIMEText
