@@ -16,7 +16,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 
-class User(db.Model):
+class Users(db.Model):
 
     uid = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
@@ -25,43 +25,43 @@ class User(db.Model):
     verified = db.Column(db.String(1))
     user_since = db.Column(db.TIMESTAMP, default=datetime.datetime.today())
 
-    def __init__(self, username, password, email):
-        self.username = username
-        self.password = password
-        self.email = email
+    def __init__(self):
+        self.username = ''
+        self.password = ''
+        self.email = ''
         self.verified = 'N'
 
     @staticmethod
     def new_user(u, p, email):
-        new_user(u, p, email)
+        _new_user(u, p, email)
 
     @staticmethod
     def returning_user(u, p, email=False):
-        return returning_user(u, p, email)
+        return _returning_user(u, p, email)
 
     @staticmethod
     def find_user(u, email=False):
-        return find_user(u, email)
+        return _find_user(u, email)
 
     @staticmethod
     def find_email(u, email=False):
-        return find_email(u, email)
+        return _find_email(u, email)
 
     @staticmethod
     def verify_password(result, p):
-        return verify_password(result, p)
+        return _verify_password(result, p)
 
     @staticmethod
     def check_verification(u, email=False):
-        return check_verification(u, email)
+        return _check_verification(u, email)
 
     @staticmethod
     def email_verified(email):
-        return email_verified(email)
+        return _email_verified(email)
 
     @staticmethod
     def change_password(email, p):
-        return change_password(email, p)
+        return _change_password(email, p)
 
 
 class Verification(db.Model):
@@ -77,11 +77,11 @@ class Verification(db.Model):
 
     @staticmethod
     def check_verification_token(token):
-        return check_verification_token(token)
+        return _check_verification_token(token)
 
     @staticmethod
     def resend_verification(email):
-        return resend_verification_email(email)
+        return _resend_verification_email(email)
 
 
 def connectdb():
@@ -97,7 +97,7 @@ def connectdb():
     return connection
 
 
-def new_user(u, p, email):
+def _new_user(u, p, email):
     connection = connectdb()
     p = ph.hash(p)
     ev.verify_email(email)
@@ -108,13 +108,13 @@ def new_user(u, p, email):
             cursor.execute(sql, (u, p, email, 'N'))
             token = ev.send_verification_email(email)
             sql = "INSERT INTO `verification` (`uid`, `email`, `token`) VALUES (%s, %s, %s)"
-            cursor.execute(sql, (find_user(u), email, token))
+            cursor.execute(sql, (_find_user(u), email, token))
             print("Verification code sent to your email.")
     finally:
         connection.close()
 
 
-def returning_user(u, p, email=False):
+def _returning_user(u, p, email=False):
     connection = connectdb()
     try:
         with connection.cursor() as cursor:
@@ -125,7 +125,7 @@ def returning_user(u, p, email=False):
                 sql = "SELECT `uid`, `username`, `password` FROM `users` WHERE `username`=%s"
             cursor.execute(sql, u)
             result = cursor.fetchone()
-            if verify_password(result, p) is False:
+            if _verify_password(result, p) is False:
                 return False
     except TypeError:
         return False
@@ -138,7 +138,7 @@ def returning_user(u, p, email=False):
         connection.close()
 
 
-def find_user(u, email=False):
+def _find_user(u, email=False):
     connection = connectdb()
     cursor = connection.cursor()
     if email:
@@ -152,7 +152,7 @@ def find_user(u, email=False):
     return result['uid']
 
 
-def find_email(u, email=False):
+def _find_email(u, email=False):
     connection = connectdb()
     cursor = connection.cursor()
     if email:
@@ -165,7 +165,7 @@ def find_email(u, email=False):
     return result['email']
 
 
-def verify_password(result, p):
+def _verify_password(result, p):
     try:
         ph.verify(result['password'], p)
         return True
@@ -173,15 +173,15 @@ def verify_password(result, p):
         return False
 
 
-def check_verification(u, email=False):
-    result = find_email(u, email)
+def _check_verification(u, email=False):
+    result = _find_email(u, email)
     if result == 'N':
         return False
     elif result == 'Y':
         return True
 
 
-def check_verification_token(token):
+def _check_verification_token(token):
     connection = connectdb()
     cursor = connection.cursor()
     sql = "SELECT `token` FROM `verification` WHERE `token`=%s"
@@ -196,7 +196,7 @@ def check_verification_token(token):
         connection.close()
 
 
-def resend_verification_email(email):
+def _resend_verification_email(email):
     connection = connectdb()
     cursor = connection.cursor()
     token = ev.send_verification_email(email)
@@ -205,7 +205,7 @@ def resend_verification_email(email):
     connection.close()
 
 
-def email_verified(email):
+def _email_verified(email):
     connection = connectdb()
     cursor = connection.cursor()
     sql = "UPDATE `users` SET `verified`='Y' WHERE `email`=%s"
@@ -221,7 +221,7 @@ def email_verified(email):
         connection.close()
 
 
-def change_password(email, p):
+def _change_password(email, p):
     connection = connectdb()
     cursor = connection.cursor()
     sql = "UPDATE `password` FROM `users` WHERE `email`=%s"

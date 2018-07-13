@@ -3,10 +3,12 @@ import database.database_connect as dc
 from database.database_connect import db
 import User.login as login
 
+# TODO - ADD WAY TO CHECK IF DATE ENTERED IS VALID - FOR LOOP IF FIRST TWO DIGITS ARE LESS THAN 31
 
-class NewDayEntry(db.Model):
+class day_usage(db.Model):
 
-    uid = db.Column(db.Integer, primary_key=True)
+    day_id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(255))
 
 
 

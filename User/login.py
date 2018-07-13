@@ -1,6 +1,7 @@
 __author__ = 'DanielAjisafe'
 
-import database.database_connect as dc
+from database.database_connect import Users as dcU
+from database.database_connect import Verification as dcV
 import User.email_verification as ev
 import pymysql.err as error
 import sys
@@ -21,23 +22,23 @@ def check_if_email(u):
 
 def check_user(u, p):
     if p != 'F':
-        cu = dc.returning_user(u, p, check_if_email(u))
+        cu = dcU.returning_user(u, p, check_if_email(u))
         if cu is not False:
-            if dc.check_verification(u, check_if_email(u)):
+            if dcU.check_verification(u, check_if_email(u)):
                 print(f'Welcome back {cu}')
             else:
                 token_entry = input('Verification code (If you have no code or need a new one type n): ')
-                while token_entry not in ('n', dc.check_verification_token(token_entry)):
+                while token_entry not in ('n', dcV.check_verification_token(token_entry)):
                     token_entry = input('Incorrect verification code (If None type n): ')
-                if dc.check_verification_token(token_entry):
-                    dc.email_verified(dc.find_email(u, check_if_email(u)))
+                if dcV.check_verification_token(token_entry):
+                    dcU.email_verified(dcU.find_email(u, check_if_email(u)))
                     print(f'Welcome {cu}')
                 else:
                     entry = input('You much verify your email to use the program. Would you like to resend verification email? (y/n)')
                     while entry not in {'y', 'n'}:
                         entry = input('Enter "y" for yes, "n" for no please: ')
                     if entry == 'y':
-                        dc.resend_verification_email(dc.find_email(u, check_if_email(u)))
+                        dcV.resend_verification_email(dcU.find_email(u, check_if_email(u)))
                         print('Sent')
                     elif entry == 'n':
                         sys.exit()
@@ -55,7 +56,7 @@ def check_user(u, p):
                 check_user(u, p)
             elif new_user == 'q':
                 sys.exit()
-        return int(dc.find_user(u, check_if_email(u)))
+        return int(dcU.find_user(u, check_if_email(u)))
     elif p == 'F':
         email = input('Email: ')
         reset_password(email)
@@ -69,7 +70,7 @@ def create_user():
     p = input('Password: ')
     email = input('Email: ')
     try:
-        dc.new_user(u, p, email)
+        dcU.new_user(u, p, email)
     except error.IntegrityError as e:
         if str(e) == str((1062, f"Duplicate entry '{u}' for key 'username'")):
             print("Username is taken")
