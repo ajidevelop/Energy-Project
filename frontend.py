@@ -1,11 +1,12 @@
 __author__ = 'DanielAjisafe'
-import database.entries.energy_usage_entry as eue
 
-
-entry = input("Insert a date and usage and separate with comma: ").split(', ')
+day = input("Day: ")
 try:
-    usage = int(entry[1])
+    use = int(day)
 except TypeError:
     usage = input("Please type a number")
-eue.new_day_entry(entry[0], usage)
+    raise
+month = input('Month: ')
+year = input('Year: ')
+usage = input('Usage: ')
 

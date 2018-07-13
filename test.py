@@ -4,7 +4,7 @@ __author__ = 'DanielAjisafe'
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import datetime
-import database.database_connect as dc
+from database.database_connect import Users as dcU
 from argon2 import PasswordHasher
 ph = PasswordHasher()
 
@@ -45,15 +45,13 @@ class Users(db.Model):
 
     @staticmethod
     def new_user(u, p, email):
-        dc.new_user(u, p, email)
+        dcU.new_user(u, p, email)
 
 
-new_user = Users()
-new_user.new_user('test12', 'test', 'a2@email.com')
-dbs = db.session(autocommit=True)
-dbs.add(new_user)
+print(datetime.date(2001, 12, 22))
+
 users = Users.query.all()
-print(users[0].username)
+print(users[0])
 
 # if __name__ == '__test__':
 #     app.run()

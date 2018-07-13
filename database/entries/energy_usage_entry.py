@@ -2,23 +2,59 @@ __author__ = 'DanielAjisafe'
 import database.database_connect as dc
 from database.database_connect import db
 import User.login as login
+import datetime
+import utilities.exceptions as e
+import sys
 
 # TODO - ADD WAY TO CHECK IF DATE ENTERED IS VALID - FOR LOOP IF FIRST TWO DIGITS ARE LESS THAN 31
 
-class day_usage(db.Model):
+
+class DayUsage(db.Model):
 
     day_id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String(255))
+    date = db.Column(db.String(10))
+    d_usage = db.Column(db.Integer)
+    uid = db.Column(db.ForeignKey('users.uid'))
 
+    def __init__(self):
+        self.date = ''
+        self.d_usage = 0
+        self.uid = 0
 
+    def new_day_entry(self, day, month, year, d_usage):
+        find = len(__class__.query.filter(__class__.uid == login.uid, __class__.date == datetime.date(year, month, day)).all())
+        try:
+            if find == 1:
+                raise e.DayExist
+            else:
+                try:
+                    self.date = datetime.date(year, month, day)
+                except TypeError:  # one of the variables is not a number
+                    return False
+        except e.DayExist:
+                user = input("Would you like to edit the entry? (Y/N): ")
+                while user not in {'Y', 'N'}:
+                    user = input('Enter "Y" for yes, "N" for no please: ')
+                if user == "N":
+                    sys.exit()
+                if user == 'Y':
+                    __class__.edit_day_entry(self)
+        self.d_usage = d_usage
+        self.uid = login.uid
 
+    @classmethod
+    def view_all_daily_usage(cls):
+        find = cls.query.filter(cls.uid == login.uid).order_by(__class__.date).all()
+        position = {}
+        for dates in range(len(find)):
+            position[find[dates].date] = find[dates].d_usage
+            print(position)
+        return position
 
-def new_day_entry(date, d_usage_input):
-    connection = dc.connectdb()
-    cursor = connection.cursor()
-    d_usage = "INSERT INTO `day_usage` (`date`, `d_usage`, `uid`) VALUES (%s, %s, %s)"
-    cursor.execute(d_usage, (f'{date}', d_usage_input, login.uid))
-    connection.close()
+    def edit_day_entry(self):
+        pass
+
+    # def view_day_usage(self, day=None, month=None, year=None):
 
 
 def new_week_entry(date_range, w_usage_input):
@@ -28,3 +64,7 @@ def new_week_entry(date_range, w_usage_input):
     cursor.execute(w_usage, (f'{date_range}', w_usage_input, login.uid))
     connection.close()
 
+
+new_user = DayUsage()
+new_user.new_day_entry(11, 10, 2014, 12)
+print(new_user.view_all_daily_usage())
