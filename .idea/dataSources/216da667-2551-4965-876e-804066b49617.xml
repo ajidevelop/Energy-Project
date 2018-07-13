@@ -1107,257 +1107,316 @@
     <table id="277" parent="2" name="month_usage">
       <Collation>utf8_general_ci</Collation>
     </table>
-    <table id="278" parent="2" name="users">
+    <table id="278" parent="2" name="user"/>
+    <table id="279" parent="2" name="users">
       <Collation>utf8_bin</Collation>
     </table>
-    <table id="279" parent="2" name="verification">
+    <table id="280" parent="2" name="verification">
       <Collation>utf8_general_ci</Collation>
     </table>
-    <table id="280" parent="2" name="week_usage">
+    <table id="281" parent="2" name="week_usage">
       <Collation>utf8_general_ci</Collation>
     </table>
-    <scheduled-event id="281" parent="2" name="expirenouser">
+    <scheduled-event id="282" parent="2" name="expirenouser">
       <Definer>root@localhost</Definer>
       <Interval>&apos;1&apos; MINUTE</Interval>
       <Starts>&apos;2018-07-10 17:27:11&apos;</Starts>
       <Preserve>0</Preserve>
       <Status>enabled</Status>
-      <LastExecuted>2018-07-12.14:05:11</LastExecuted>
+      <LastExecuted>2018-07-12.19:54:11</LastExecuted>
     </scheduled-event>
-    <scheduled-event id="282" parent="2" name="expireuser">
+    <scheduled-event id="283" parent="2" name="expireuser">
       <Definer>root@localhost</Definer>
       <Interval>&apos;30&apos; MINUTE</Interval>
       <Starts>&apos;2018-07-10 17:27:11&apos;</Starts>
       <Preserve>0</Preserve>
       <Status>enabled</Status>
-      <LastExecuted>2018-07-12.13:57:11</LastExecuted>
+      <LastExecuted>2018-07-12.19:27:11</LastExecuted>
     </scheduled-event>
-    <column id="283" parent="276" name="day_id">
+    <column id="284" parent="276" name="day_id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="284" parent="276" name="date">
+    <column id="285" parent="276" name="date">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="285" parent="276" name="d_usage">
+    <column id="286" parent="276" name="d_usage">
       <Position>3</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="286" parent="276" name="uid">
+    <column id="287" parent="276" name="uid">
       <Position>4</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="287" parent="276" name="uid">
+    <index id="288" parent="276" name="uid">
       <ColNames>uid</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="288" parent="276" name="PRIMARY">
+    <key id="289" parent="276" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>day_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="289" parent="276" name="day_usage_ibfk_1">
+    <foreign-key id="290" parent="276" name="day_usage_ibfk_1">
       <ColNames>uid</ColNames>
       <RefSchemaName>db</RefSchemaName>
       <RefTableName>users</RefTableName>
       <RefColNames>uid</RefColNames>
     </foreign-key>
-    <column id="290" parent="277" name="month_id">
+    <column id="291" parent="277" name="month_id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="291" parent="277" name="month">
+    <column id="292" parent="277" name="month">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="292" parent="277" name="month_usage">
+    <column id="293" parent="277" name="month_usage">
       <Position>3</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="293" parent="277" name="uid">
+    <column id="294" parent="277" name="uid">
       <Position>4</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="294" parent="277" name="uid">
+    <index id="295" parent="277" name="uid">
       <ColNames>uid</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="295" parent="277" name="PRIMARY">
+    <key id="296" parent="277" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>month_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="296" parent="277" name="month_usage_ibfk_1">
+    <foreign-key id="297" parent="277" name="month_usage_ibfk_1">
       <ColNames>uid</ColNames>
       <RefSchemaName>db</RefSchemaName>
       <RefTableName>users</RefTableName>
       <RefColNames>uid</RefColNames>
     </foreign-key>
-    <column id="297" parent="278" name="uid">
+    <column id="298" parent="278" name="uid">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="298" parent="278" name="username">
+    <column id="299" parent="278" name="username">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="299" parent="278" name="password">
+    <column id="300" parent="278" name="password">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="300" parent="278" name="email">
+    <column id="301" parent="278" name="email">
       <Position>4</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="301" parent="278" name="verified">
+    <column id="302" parent="278" name="verified">
       <Position>5</Position>
       <DataType>varchar(1)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="302" parent="278" name="user_since">
+    <column id="303" parent="278" name="user_since">
+      <Position>6</Position>
+      <DataType>timestamp|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="304" parent="278" name="username">
+      <ColNames>username</ColNames>
+      <Unique>1</Unique>
+      <Type>btree</Type>
+    </index>
+    <index id="305" parent="278" name="email">
+      <ColNames>email</ColNames>
+      <Unique>1</Unique>
+      <Type>btree</Type>
+    </index>
+    <key id="306" parent="278" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>uid</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="307" parent="278" name="username">
+      <ColNames>username</ColNames>
+      <UnderlyingIndexName>username</UnderlyingIndexName>
+    </key>
+    <key id="308" parent="278" name="email">
+      <ColNames>email</ColNames>
+      <UnderlyingIndexName>email</UnderlyingIndexName>
+    </key>
+    <column id="309" parent="279" name="uid">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="310" parent="279" name="username">
+      <Position>2</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="311" parent="279" name="password">
+      <Position>3</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="312" parent="279" name="email">
+      <Position>4</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="313" parent="279" name="verified">
+      <Position>5</Position>
+      <DataType>varchar(1)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="314" parent="279" name="user_since">
       <Position>6</Position>
       <DataType>timestamp|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="303" parent="278" name="username">
+    <index id="315" parent="279" name="username">
       <ColNames>username</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <index id="304" parent="278" name="email">
+    <index id="316" parent="279" name="email">
       <ColNames>email</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="305" parent="278" name="PRIMARY">
+    <key id="317" parent="279" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>uid</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="306" parent="278" name="username">
+    <key id="318" parent="279" name="username">
       <ColNames>username</ColNames>
       <UnderlyingIndexName>username</UnderlyingIndexName>
     </key>
-    <key id="307" parent="278" name="email">
+    <key id="319" parent="279" name="email">
       <ColNames>email</ColNames>
       <UnderlyingIndexName>email</UnderlyingIndexName>
     </key>
-    <column id="308" parent="279" name="uid">
+    <column id="320" parent="280" name="uid">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="309" parent="279" name="email">
+    <column id="321" parent="280" name="email">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="310" parent="279" name="token">
+    <column id="322" parent="280" name="token">
       <Position>3</Position>
       <DataType>varchar(30)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="311" parent="279" name="ts_create">
+    <column id="323" parent="280" name="ts_create">
       <Position>4</Position>
       <DataType>timestamp|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="312" parent="279" name="email">
+    <index id="324" parent="280" name="email">
       <ColNames>email
 token</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <index id="313" parent="279" name="token">
+    <index id="325" parent="280" name="token">
       <ColNames>token</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="314" parent="279" name="PRIMARY">
+    <key id="326" parent="280" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>uid</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="315" parent="279" name="email">
+    <key id="327" parent="280" name="email">
       <ColNames>email
 token</ColNames>
       <UnderlyingIndexName>email</UnderlyingIndexName>
     </key>
-    <key id="316" parent="279" name="token">
+    <key id="328" parent="280" name="token">
       <ColNames>token</ColNames>
       <UnderlyingIndexName>token</UnderlyingIndexName>
     </key>
-    <foreign-key id="317" parent="279" name="verification_ibfk_1">
+    <foreign-key id="329" parent="280" name="verification_ibfk_1">
       <ColNames>uid</ColNames>
       <RefSchemaName>db</RefSchemaName>
       <RefTableName>users</RefTableName>
       <RefColNames>uid</RefColNames>
     </foreign-key>
-    <column id="318" parent="280" name="week_id">
+    <column id="330" parent="281" name="week_id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="319" parent="280" name="date-range">
+    <column id="331" parent="281" name="date-range">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="320" parent="280" name="w_usage">
+    <column id="332" parent="281" name="w_usage">
       <Position>3</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="321" parent="280" name="uid">
+    <column id="333" parent="281" name="uid">
       <Position>4</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="322" parent="280" name="uid">
+    <index id="334" parent="281" name="uid">
       <ColNames>uid</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="323" parent="280" name="PRIMARY">
+    <key id="335" parent="281" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>week_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="324" parent="280" name="week_usage_ibfk_1">
+    <foreign-key id="336" parent="281" name="week_usage_ibfk_1">
       <ColNames>uid</ColNames>
       <RefSchemaName>db</RefSchemaName>
       <RefTableName>users</RefTableName>

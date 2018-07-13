@@ -1,32 +1,38 @@
 __author__ = 'DanielAjisafe'
-from flask
-# import smtplib
-# from email.mime.multipart import MIMEMultipart
-# from email.mime.text import MIMEText
-#
-#
-# email = "noreply.energysaver@gmail.com"
-# to = "oluwatoyinaij@gmail.com"
-#
-#
-# msg = MIMEMultipart()
-# msg['From'] = email
-# msg['To'] = to
-# msg['Subject'] = "Energy Saver"
-# body = "Test"
-# msg.attach(MIMEText(body, 'plain'))
-#
-# server = smtplib.SMTP('smtp.gmail.com', 587)
-# server.starttls()
-# server.login(email, "energys@ver")
-# server.login(email, "YOUR PASSWORD")
-# text = msg.as_string()
-# server.sendmail(email, to, text)
-# server.quit()
 
-msg = 'fod'
-try:
-    raise ValueError(msg)
-except ValueError as e:
-    if str(e) is msg:
-        print('works')
+# Flask Support
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+import datetime
+
+app = Flask(__name__)
+app.config['DEBUG'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://python:pyth0n_@ccess@GOSHEN-SPECTRE:3307/db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db = SQLAlchemy(app)
+
+
+class User(db.Model):
+
+    uid = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    verified = db.Column(db.String(1))
+    user_since = db.Column(db.TIMESTAMP, default=datetime.datetime.today())
+
+    def __init__(self, username, password, email):
+        self.username = username
+        self.password = password
+        self.email = email
+        self.verified = 'N'
+
+
+new_user = User('test', 'test', 'test')
+dbs = db.session(autocommit=True)
+dbs.add(new_user)
+users = User.query.all()
+print(users[0].username)
+
+# if __name__ == '__test__':
+#     app.run()

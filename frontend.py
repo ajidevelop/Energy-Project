@@ -1,5 +1,5 @@
 __author__ = 'DanielAjisafe'
-import entries.energy_usage_entry as eue
+import database.entries.energy_usage_entry as eue
 
 
 entry = input("Insert a date and usage and separate with comma: ").split(', ')
