@@ -1,5 +1,5 @@
 __author__ = 'DanielAjisafe'
-import database.database_connect as dc
+from flask
 # import smtplib
 # from email.mime.multipart import MIMEMultipart
 # from email.mime.text import MIMEText
