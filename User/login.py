@@ -34,7 +34,7 @@ def check_user(u, p):
                 print(f'Welcome back {cu}')
             else:
                 token_entry = input('Verification code (If you have no code or need a new one type n): ')
-                while token_entry not in ('n', dcV.check_verification_token(token_entry)):
+                while token_entry == 'n' or not dcV.check_verification_token(token_entry):
                     token_entry = input('Incorrect verification code (If None type n): ')
                 if dcV.check_verification_token(token_entry):
                     dcU.email_verified(dcU.find_email(u, check_if_email(u)))

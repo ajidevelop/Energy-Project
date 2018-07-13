@@ -10,16 +10,11 @@ import sys
 
 
 class DayUsage(db.Model):
-
+    __tablename__ = 'day_usage'
     day_id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String(10))
-    d_usage = db.Column(db.Integer)
-    uid = db.Column(db.ForeignKey('users.uid'))
-
-    def __init__(self):
-        self.date = ''
-        self.d_usage = 0
-        self.uid = 0
+    date = db.Column(db.String(10), nullable=False)
+    d_usage = db.Column(db.Integer, nullable=False)
+    uid = db.Column(db.ForeignKey('users.uid'), nullable=False)
 
     def new_day_entry(self, day, month, year, d_usage):
         find = len(__class__.query.filter(__class__.uid == login.uid, __class__.date == datetime.date(year, month, day)).all())
