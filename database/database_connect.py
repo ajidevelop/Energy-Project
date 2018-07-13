@@ -31,7 +31,41 @@ class User(db.Model):
         self.email = email
         self.verified = 'N'
 
+    @staticmethod
+    def new_user(u, p, email):
+        new_user(u, p, email)
 
+    @staticmethod
+    def returning_user(u, p, email=False):
+        return returning_user(u, p, email)
+
+    @staticmethod
+    def find_user(u, email=False):
+        return find_user(u, email)
+
+    @staticmethod
+    def find_email(u, email=False):
+        return find_email(u, email)
+
+    @staticmethod
+    def verify_password(result, p):
+        return verify_password(result, p)
+
+    @staticmethod
+    def check_verification(u, email=False):
+        return check_verification(u, email)
+
+    @staticmethod
+    def resend_verification_email(email):
+        resend_verification_email(email)
+
+    @staticmethod
+    def email_verified(email):
+        return email_verified(email)
+
+    @staticmethod
+    def change_password(email, p):
+        return change_password(email, p)
 
 
 def connectdb():
