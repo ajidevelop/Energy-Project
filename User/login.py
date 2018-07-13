@@ -21,7 +21,13 @@ def check_if_email(u):
 
 
 def check_user(u, p):
-    if p != 'F':
+    if p == 'F':
+        email = input('Email: ')
+        reset_password(email)
+        u = input('Username or Email: ')
+        p = input('Password: ')
+        check_user(u, p)
+    else:
         cu = dcU.returning_user(u, p, check_if_email(u))
         if cu is not False:
             if dcU.check_verification(u, check_if_email(u)):
@@ -57,12 +63,6 @@ def check_user(u, p):
             elif new_user == 'q':
                 sys.exit()
         return int(dcU.find_user(u, check_if_email(u)))
-    elif p == 'F':
-        email = input('Email: ')
-        reset_password(email)
-        u = input('Username or Email: ')
-        p = input('Password: ')
-        check_user(u, p)
 
 
 def create_user():
@@ -89,7 +89,7 @@ def reset_password(email):
     ev.send_verification_email(email)
     print("Verification Code Sent.")
     token = input("Verification Code (press q to quit): ")
-    while dc.check_verification_token(token) is False or token == 'q':
+    while dcV.check_verification_token(token) is False or token == 'q':
         print("Invalid Verification Code")
         input("Verification code (press q to quit): ")
     new_pass = input("New Password: ")
@@ -98,7 +98,7 @@ def reset_password(email):
         print("Passwords do not match. Try Again.")
         new_pass = input("New Password: ")
         new_pass_verify = input("Re-enter new password: ")
-    if dc.change_password(email, new_pass):
+    if dcU.change_password(email, new_pass):
         print("Password Reset")
     else:
         print('Error')

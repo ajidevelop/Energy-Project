@@ -174,11 +174,19 @@ def _verify_password(result, p):
 
 
 def _check_verification(u, email=False):
+    connection = connectdb()
+    cursor = connection.cursor()
     result = _find_email(u, email)
-    if result == 'N':
-        return False
-    elif result == 'Y':
-        return True
+    sql = "SELECT `verified` FROM `users` WHERE `email`=%s"
+    cursor.execute(sql, result)
+    result = cursor.fetchone()['verified']
+    try:
+        if result == 'N':
+            return False
+        elif result == 'Y':
+            return True
+    finally:
+        connection.close()
 
 
 def _check_verification_token(token):
