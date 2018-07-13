@@ -56,16 +56,32 @@ class User(db.Model):
         return check_verification(u, email)
 
     @staticmethod
-    def resend_verification_email(email):
-        resend_verification_email(email)
-
-    @staticmethod
     def email_verified(email):
         return email_verified(email)
 
     @staticmethod
     def change_password(email, p):
         return change_password(email, p)
+
+
+class Verification(db.Model):
+    uid = db.Column(db.Integer, db.ForeignKey('users.uid'), primary_key=True, nullable=False)
+    email = db.Column(db.String(255), nullable=False, unique=True)
+    token = db.Column(db.String(30), unique=True)
+    ts_create = db.Column(db.TIMESTAMP, default=datetime.datetime.today())
+
+    def __init__(self, uid):
+        self.token = ''
+        self.email = ''
+        self.uid = uid
+
+    @staticmethod
+    def check_verification_token(token):
+        return check_verification_token(token)
+
+    @staticmethod
+    def resend_verification(email):
+        return resend_verification_email(email)
 
 
 def connectdb():
