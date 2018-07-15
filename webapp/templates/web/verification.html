@@ -1,0 +1,14 @@
+{% extends "web/layout.html" %}
+
+{% block heading %}
+    Verification
+{% endblock %}
+
+{% block body %}
+
+    <form action="{{ url_for('verify') }}" method="post">
+        <input type="text" name="verification_code" placeholder="Enter Verification Code">
+        <button>Check Verification Code</button>
+    </form>
+
+{% endblock %}

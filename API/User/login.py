@@ -7,9 +7,7 @@ import pymysql.err as error
 import sys
 from argon2 import PasswordHasher
 ph = PasswordHasher()
-
-user = input('Username or Email: ')
-password = input('Password (Forgot Password? Press F): ')
+import API.utilities.exceptions as e
 
 
 def check_if_email(u):
@@ -21,48 +19,41 @@ def check_if_email(u):
 
 
 def check_user(u, p):
-    if p == 'F':
-        email = input('Email: ')
-        reset_password(email)
-        u = input('Username or Email: ')
-        p = input('Password: ')
-        check_user(u, p)
-    else:
-        cu = dcU.returning_user(u, p, check_if_email(u))
-        if cu is not False:
-            if dcU.check_verification(u, check_if_email(u)):
-                print(f'Welcome back {cu}')
+    cu = dcU.returning_user(u, p, check_if_email(u))
+    if cu is not False:
+        if dcU.check_verification(u, check_if_email(u)):
+            return f'Welcome back {cu}'
+        else:
+            raise e.NeedVerificationCode()
+            token_entry = input('Verification code (If you have no code or need a new one type n): ')
+            while token_entry == 'n' or not dcV.check_verification_token(token_entry):
+                token_entry = input('Incorrect verification code (If None type n): ')
+            if dcV.check_verification_token(token_entry):
+                dcU.email_verified(dcU.find_email(u, check_if_email(u)))
+                print(f'Welcome {cu}')
             else:
-                token_entry = input('Verification code (If you have no code or need a new one type n): ')
-                while token_entry == 'n' or not dcV.check_verification_token(token_entry):
-                    token_entry = input('Incorrect verification code (If None type n): ')
-                if dcV.check_verification_token(token_entry):
-                    dcU.email_verified(dcU.find_email(u, check_if_email(u)))
-                    print(f'Welcome {cu}')
-                else:
-                    entry = input('You much verify your email to use the program. Would you like to resend verification email? (y/n)')
-                    while entry not in {'y', 'n'}:
-                        entry = input('Enter "y" for yes, "n" for no please: ')
-                    if entry == 'y':
-                        dcV.resend_verification_email(dcU.find_email(u, check_if_email(u)))
-                        print('Sent')
-                    elif entry == 'n':
-                        sys.exit()
-        elif cu is False:
-            print('Wrong username/password')
-            new_user = input('Create new User? y/n (q to leave) ')
-            while new_user not in {'q', 'y', 'n'}:
-                new_user = input('Enter "y" for yes, "n" for no, or "q" for quit please: ')
-            if new_user == 'y':
-                u, p = create_user()
-                check_user(u, p)
-            elif new_user == 'n':
-                u = input('Username or Email: ')
-                p = input('Password (Forgot Password? Press F): ')
-                check_user(u, p)
-            elif new_user == 'q':
-                sys.exit()
-        return int(dcU.find_user(u, check_if_email(u)))
+                entry = input('You much verify your email to use the program. Would you like to resend verification email? (y/n)')
+                while entry not in {'y', 'n'}:
+                    entry = input('Enter "y" for yes, "n" for no please: ')
+                if entry == 'y':
+                    dcV.resend_verification_email(dcU.find_email(u, check_if_email(u)))
+                    print('Sent')
+                elif entry == 'n':
+                    sys.exit()
+    elif cu is False:
+        raise e.WrongPassword
+        # while new_user not in {'q', 'y', 'n'}:
+        #     new_user = input('Enter "y" for yes, "n" for no, or "q" for quit please: ')
+        # if new_user == 'y':
+        #     u, p = create_user()
+        #     check_user(u, p)
+        # elif new_user == 'n':
+        #     u = input('Username or Email: ')
+        #     p = input('Password (Forgot Password? Press F): ')
+        #     check_user(u, p)
+        # elif new_user == 'q':
+        #     sys.exit()
+    return int(dcU.find_user(u, check_if_email(u)))
 
 
 def create_user():
@@ -70,6 +61,10 @@ def create_user():
     p = input('Password: ')
     email = input('Email: ')
     try:
+        for letter in u:
+            for symbol in ("!@#$%^&*()=?/><:;{[]}|"):
+                if symbol == letter:
+                    raise error.IntegrityError
         dcU.new_user(u, p, email)
     except error.IntegrityError as e:
         if str(e) == str((1062, f"Duplicate entry '{u}' for key 'username'")):
@@ -104,5 +99,3 @@ def reset_password(email):
         print('Error')
         sys.exit()
 
-
-uid = check_user(user, password)

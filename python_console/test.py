@@ -4,7 +4,7 @@ __author__ = 'DanielAjisafe'
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import datetime
-from database.database_connect import Users as dcU
+from python_console.database.database_connect import Users as dcU
 from argon2 import PasswordHasher
 ph = PasswordHasher()
 
