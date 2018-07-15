@@ -1,5 +1,5 @@
 import pymysql.cursors
-import User.email_verification as ev
+import API.User.email_verification as ev
 from argon2 import exceptions as e
 from argon2 import PasswordHasher
 ph = PasswordHasher()
@@ -12,7 +12,6 @@ import datetime
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://python:pyth0n_@ccess@GOSHEN-SPECTRE:3307/db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'toyin'
 db = SQLAlchemy(app)
 
