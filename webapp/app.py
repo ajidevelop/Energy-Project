@@ -1,11 +1,12 @@
 from API.User.login import check_user
 import API.utilities.exceptions as e
 from API.database.database_connect import Users, Verification as dcU
+import webapp.app_config as ac
 
 from flask import render_template, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-import app_config as ac
+
 
 app = ac.app
 
@@ -18,7 +19,7 @@ w_credentials = "Wrong Username/Password"
 
 @app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template('web/index.html')
 
 
 @app.route("/login", methods=['POST'])

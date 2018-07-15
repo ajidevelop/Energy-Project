@@ -7,7 +7,7 @@ ph = PasswordHasher()
 # Flask Support
 from flask_sqlalchemy import SQLAlchemy
 import datetime
-import app_config as ac
+import webapp.app_config as ac
 
 db = SQLAlchemy(ac.app)
 
