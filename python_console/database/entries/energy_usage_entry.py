@@ -1,9 +1,9 @@
 __author__ = 'DanielAjisafe'
-import database.database_connect as dc
-from database.database_connect import db
-import User.login as login
+import python_console.database.database_connect as dc
+from python_console.database.database_connect import db
+import python_console.User.login as login
 import datetime
-import utilities.exceptions as e
+import python_console.utilities.exceptions as e
 import sys
 
 # TODO - ADD WAY TO CHECK IF DATE ENTERED IS VALID - FOR LOOP IF FIRST TWO DIGITS ARE LESS THAN 31

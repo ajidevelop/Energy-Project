@@ -1,8 +1,8 @@
 __author__ = 'DanielAjisafe'
 
-from API.database.database_connect import Users as dcU
-from API.database.database_connect import Verification as dcV
-import API.User.email_verification as ev
+from python_console.database.database_connect import Users as dcU
+from python_console.database.database_connect import Verification as dcV
+import python_console.User.email_verification as ev
 import pymysql.err as error
 import sys
 from argon2 import PasswordHasher

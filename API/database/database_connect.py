@@ -5,15 +5,11 @@ from argon2 import PasswordHasher
 ph = PasswordHasher()
 
 # Flask Support
-from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import datetime
+import app_config as ac
 
-app = Flask(__name__)
-app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://python:pyth0n_@ccess@GOSHEN-SPECTRE:3307/db'
-app.secret_key = 'toyin'
-db = SQLAlchemy(app)
+db = SQLAlchemy(ac.app)
 
 
 class Users(db.Model):
