@@ -22,9 +22,9 @@ def index():
     return render_template('web/index.html', loggedin=False)
 
 
-# @app.route('/logout', methods=['POST'])
-# def logout():
-#     return render_template('web/index.html', text='Logged Out', loggedin=False)
+@app.route('/logout', methods=['POST'])
+def logout():
+    return render_template('web/index.html', text='Logged Out', loggedin=False)
 
 
 @app.route("/login", methods=['POST'])
