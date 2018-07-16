@@ -56,28 +56,20 @@ def check_user(u, p):
     return int(dcU.find_user(u, check_if_email(u)))
 
 
-def create_user():
-    u = input('Username: ')
-    p = input('Password: ')
-    email = input('Email: ')
+def create_user(u, p, email):
     try:
         for letter in u:
             for symbol in ("!@#$%^&*()=?/><:;{[]}|"):
                 if symbol == letter:
                     raise error.IntegrityError
         dcU.new_user(u, p, email)
-    except error.IntegrityError as e:
-        if str(e) == str((1062, f"Duplicate entry '{u}' for key 'username'")):
-            print("Username is taken")
-            create_user()
-        if str(e) == str((1062, f"Duplicate entry '{email}' for key 'email'")):
-            print("Email is taken")
-            create_user()
+    except error.IntegrityError as exception:
+        if str(exception) == str((1062, f"Duplicate entry '{u}' for key 'username'")):
+            raise e.TakenField(u, 'username')
+        if str(exception) == str((1062, f"Duplicate entry '{email}' for key 'email'")):
+            raise e.TakenField(email, 'email')
     except ValueError:
-        print("Invalid Email")
-        create_user()
-    else:
-        return u, p
+        raise e.InvalidEmail(email)
 
 
 def reset_password(email):
@@ -98,4 +90,3 @@ def reset_password(email):
     else:
         print('Error')
         sys.exit()
-

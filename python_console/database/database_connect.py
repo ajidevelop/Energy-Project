@@ -210,4 +210,4 @@ def _change_password(email, p):
 
 if __name__ == '__main__':
     testUser = Users()
-    print(testUser.check_verification_token('test'))
+    print(testUser.find_user('fola@email.com', True))

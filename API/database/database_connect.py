@@ -1,6 +1,7 @@
 import pymysql.cursors
 import API.User.email_verification as ev
 from argon2 import exceptions as e
+import API.utilities.exceptions as mye
 from argon2 import PasswordHasher
 ph = PasswordHasher()
 
@@ -32,14 +33,14 @@ class Users(db.Model):
     @classmethod
     def find_user(cls, u, email=False):
         if email:
-            return cls.query.filter_by(email=email).first().uid
+            return cls.query.filter_by(email=u).first().uid
         else:
             return cls.query.filter_by(username=u).first().uid
 
     @classmethod
     def find_email(cls, u, email=False):
         if email:
-            return cls.query.filter_by(email=email).first().email
+            return cls.query.filter_by(email=u).first().email
         else:
             return cls.query.filter_by(username=u).first().email
 
@@ -55,9 +56,11 @@ class Users(db.Model):
     def check_verification(u, email=False):
         return _check_verification(u, email)
 
-    @staticmethod
-    def email_verified(email):
-        return _email_verified(email)
+    @classmethod
+    def email_verified(cls, e_mail, token=None):
+        e_mail, email = _email_verified(e_mail, token)
+        if e_mail:
+            return cls.query.filter_by(email=email).first().username
 
     @staticmethod
     def change_password(email, p):
@@ -77,7 +80,11 @@ class Verification(db.Model):
 
     @staticmethod
     def resend_verification(email):
-        return _resend_verification_email(email)
+        try:
+            Users.find_email(email, True)
+            return _resend_verification_email(email)
+        except AttributeError:
+            raise mye.NoEmail
 
 
 def connectdb():
@@ -174,16 +181,23 @@ def _resend_verification_email(email):
     connection.close()
 
 
-def _email_verified(email):
+def _email_verified(email, token=None):
     connection = connectdb()
     cursor = connection.cursor()
-    sql = "UPDATE `users` SET `verified`='Y' WHERE `email`=%s"
-    result = cursor.execute(sql, email)
+    if token is not None:
+        sql1 = "SELECT `email` FROM `verification` WHERE `token`=%s"
+        cursor.execute(sql1, token)
+        email = cursor.fetchone()['email']
+        sql = "UPDATE `users` SET `verified`='Y' WHERE `email`=%s"
+        result = cursor.execute(sql, email)
+    else:
+        sql = "UPDATE `users` SET `verified`='Y' WHERE `email`=%s"
+        result = cursor.execute(sql, email)
     try:
         if result == 1:
             sql = "DELETE FROM `db`.`verification` WHERE `email`=%s;"
             cursor.execute(sql, email)
-            return True
+            return True, email
         elif result == 0:
             return False
     finally:
@@ -206,4 +220,5 @@ def _change_password(email, p):
 
 if __name__ == '__main__':
     testUser = Users()
-    print(testUser.check_verification_token('test'))
+    verify = Verification()
+    _email_verified('a', token='L1trP6H8OmmLR3OvRHswr4NBGIg')

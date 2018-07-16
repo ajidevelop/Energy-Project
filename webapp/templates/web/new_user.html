@@ -1,21 +1,20 @@
 {% extends "web/layout.html" %}
 
 {% block heading %}
-    Login
+    New User
 {% endblock %}
 
 {% block body %}
 
-    <form action="{{ url_for('login') }}" method="post">
+    <form action="{{ url_for('create_user') }}" method="post">
         <input type="text" name="username" placeholder="Enter Username">
         <input type="text" name="password" placeholder="Enter Password">
-        <button>Log In</button>
+        <input type="text" name="email" placeholder="Enter Email">
+        <button>Create User</button>
     </form>
 
-    <form action="{{ url_for('new_user') }}" method="post">
-        <button>Create Account</button>
-    </form>
     <p>
         {{ text }}
     </p>
+
 {% endblock %}
