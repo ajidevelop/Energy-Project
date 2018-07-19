@@ -4,30 +4,51 @@
     Login
 {% endblock %}
 
-    {{ loggedin | default(False) }}
+    {{ loggedin | default(False, true) }}
+    {{ verification | default(False, true) }}
+    {{ showlogin | default(True) }}
 
 {% block body %}
 
-    {% if loggedin == False %}
+    {% if showlogin == True %}
 
-        <form action="{{ url_for('login') }}" method="post">
-            <input type="text" name="username" placeholder="Enter Username">
-            <input type="text" name="password" placeholder="Enter Password">
-            <button>Log In</button>
-        </form>
+        {% if loggedin == True %}
 
-        <form action="{{ url_for('new_user') }}" method="post">
-            <button>Create Account</button>
-        </form>
+            <form action="{{ url_for('logout') }}" method="post">
+                <input type="text" name="username" placeholder="Enter Username">
+                <input type="text" name="password" placeholder="Enter Password">
+                <button>Log Out</button>
+            </form>
 
-    {% else  %}
-        <form action="{{ url_for('logout') }}" method="post">
-            <input type="text" name="username" placeholder="Enter Username">
-            <input type="text" name="password" placeholder="Enter Password">
-            <button>Log Out</button>
-        </form>
+        {% else  %}
+
+            <form action="{{ url_for('login') }}" method="post">
+                <input type="text" name="username" placeholder="Enter Username">
+                <input type="text" name="password" placeholder="Enter Password">
+                <button>Log In</button>
+            </form>
+
+            <form action="{{ url_for('new_user') }}" method="post">
+                <button>Create Account</button>
+            </form>
+
+        {% endif %}
     {% endif %}
 
+    {% if verification == True %}
+
+{#        {{ showlogin | False }}#}
+
+        <form action="{{ url_for('verify') }}" method="post">
+            <input type="text" name="token" placeholder="Enter Verification Code">
+            <button>Check Verification Code</button>
+        </form>
+
+        <form action="{{ url_for('resend_request') }}" method="post">
+            <button>Resend Verification Code</button>
+        </form>
+
+    {% endif %}
 
     <p>
         {{ text }}
