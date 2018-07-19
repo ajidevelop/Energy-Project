@@ -90,3 +90,6 @@ def reset_password(email):
     else:
         print('Error')
         sys.exit()
+
+
+user_logged_in = False

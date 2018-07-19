@@ -221,4 +221,4 @@ def _change_password(email, p):
 if __name__ == '__main__':
     testUser = Users()
     verify = Verification()
-    _email_verified('a', token='L1trP6H8OmmLR3OvRHswr4NBGIg')
+    _check_verification_token('test')
