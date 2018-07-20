@@ -3,21 +3,18 @@ body {
   background: #fff;
   font-weight: 300; }
 
-.container {
-  width: 80%;
-  margin: 0 auto; }
+.content {
+  background-color: #333;
+  display: grid;
+  margin-top: 300px; }
 
 header {
   background: #55d6aa;
   text-align: center;
   position: fixed;
   z-index: 999;
-  width: 100%; }
-
-.logo {
-  float: left;
-  padding: 10px 0;
-  height: 100px; }
+  width: 100%;
+  top: 0; }
 
 nav {
   position: absolute;
@@ -25,7 +22,18 @@ nav {
   top: 100%;
   left: 0;
   background: #55d6aa;
-  width: 100%; }
+  width: 100%;
+  -webkit-transform: scale(1, 0);
+  -moz-transform: scale(1, 0);
+  -ms-transform: scale(1, 0);
+  -o-transform: scale(1, 0);
+  transform: scale(1, 0);
+  transform-origin: top;
+  -webkit-transition: transform 400ms ease-in-out;
+  -moz-transition: transform 400ms ease-in-out;
+  -ms-transition: transform 400ms ease-in-out;
+  -o-transition: transform 400ms ease-in-out;
+  transition: transform 400ms ease-in-out; }
   nav ul {
     margin: 0;
     padding: 0;
@@ -37,12 +45,109 @@ nav {
     color: white !important;
     text-decoration: none;
     font-size: 1.2em;
-    text-transform: uppercase; }
+    text-transform: uppercase;
+    opacity: 0;
+    -webkit-transition: opacity 250ms 0.2s ease-in-out;
+    -moz-transition: opacity 250ms 0.2s ease-in-out;
+    -ms-transition: opacity 250ms 0.2s ease-in-out;
+    -o-transition: opacity 250ms 0.2s ease-in-out;
+    transition: opacity 250ms 0.2s ease-in-out;
+    transition: opacity 150ms ease-in-out; }
     nav a:hover {
-      color: #000; }
+      color: #000 !important; }
 
-.nav-toggle:checked ~ nav {
-  display: block; }
+.nav-toggle {
+  display: none; }
+  .nav-toggle:checked ~ nav {
+    -webkit-transform: scale(1, 1);
+    -moz-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+    transform: scale(1, 1); }
+    .nav-toggle:checked ~ nav a {
+      opacity: 1;
+      transition: opacity 250ms ease-in-out 250ms; }
+
+.nav-toggle-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-left: 1em;
+  height: 100%;
+  display: flex;
+  align-items: center; }
+  .nav-toggle-label span, .nav-toggle-label span::before, .nav-toggle-label span::after {
+    display: block;
+    background: white;
+    height: 2px;
+    width: 2em;
+    border-radius: 2px;
+    position: relative; }
+  .nav-toggle-label span::before, .nav-toggle-label span::after {
+    content: '';
+    position: absolute; }
+  .nav-toggle-label span::before {
+    bottom: 7px; }
+  .nav-toggle-label span::after {
+    top: 7px; }
+
+@media screen and (min-width: 800px) {
+  .nav-toggle-label {
+    display: none; }
+
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto minmax(600px, 3fr) 1fr; }
+
+  .logo {
+    grid-column: 2 / span 1; }
+
+  nav {
+    all: unset;
+    grid-column: 3 / 4;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 75px; }
+    nav ul {
+      display: flex;
+      justify-content: flex-end; }
+    nav li {
+      margin-left: 3em;
+      margin-bottom: 0; }
+    nav a {
+      opacity: 1;
+      position: relative; }
+      nav a::before {
+        content: '';
+        display: block;
+        height: 5px;
+        background: black;
+        position: absolute;
+        top: -.5em;
+        left: 0;
+        right: 0;
+        -webkit-transform: scale(0, 1);
+        -moz-transform: scale(0, 1);
+        -ms-transform: scale(0, 1);
+        -o-transform: scale(0, 1);
+        transform: scale(0, 1);
+        -webkit-transition: transform 250ms ease-in-out;
+        -moz-transition: transform 250ms ease-in-out;
+        -ms-transition: transform 250ms ease-in-out;
+        -o-transition: transform 250ms ease-in-out;
+        transition: transform 250ms ease-in-out; }
+      nav a:hover::before {
+        -webkit-transform: scale(1, 1);
+        -moz-transform: scale(1, 1);
+        -ms-transform: scale(1, 1);
+        -o-transform: scale(1, 1);
+        transform: scale(1, 1); } }
+body {
+  margin: 0;
+  background: #222;
+  font-family: 'Works Sans', sans-serif;
+  font-weight: 400; }
 
 p {
   font-size: 10px;

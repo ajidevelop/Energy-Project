@@ -1,5 +1,14 @@
 @import "navbar";
 
+body {
+  margin: 0;
+  background: #222;
+  font: {
+    family: 'Works Sans', sans-serif;
+    weight: 400;
+  }
+}
+
 p {
   font-size: 10px;
   color: #0069d9;

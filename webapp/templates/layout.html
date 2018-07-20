@@ -2,32 +2,31 @@
 <html>
     <head>
         <title>{% block title %}{% endblock %}</title>
-{#        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/bootstrap.css') }}">#}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/sass/app.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sass/app.css') }}">
     </head>
     <body>
-{#  NavBar  #}
-    <header>
-        <img src="{{ url_for('static', filename='assets/functions.jpg') }}" alt="logo" class="logo">
-        <input type="checkbox" class="nav-toggle">
-        <nav>
-            <ul>
-                <li><a>Home</a></li>
-                <li><a>Why?</a></li>
-                <li><a>Test</a></li>
-                <li><a>About</a></li>
-            </ul>
-        </nav>
-    </header>
-        <div class="container">
+{#  NavBar starts  #}
+        <header>
+            <h1 class="logo">Logo</h1>
+            <input type="checkbox" id="nav-toggle" class="nav-toggle">
+            <nav>
+                <ul>
+                    <li><a>Home</a></li>
+                    <li><a>Usage</a></li>
+                    <li><a>Test</a></li>
+                    <li><a>{% block text %}{% endblock %}o %}</a></li>
+                </ul>
+            </nav>
+            <label for="nav-toggle" class="nav-toggle-label">
+                <span></span>
+            </label>
+        </header>
+{#  NavBar ends#}
+        <div class="content ">
             <form action="{{ url_for('index') }}" method="get">
                 <button class="btn btn-primary">Home</button>
             </form>
-            <div>
-                <p>
-                    text
-                </p>
-            </div>
             {% block body %}
             {% endblock %}
         </div>

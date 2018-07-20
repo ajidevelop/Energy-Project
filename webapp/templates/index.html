@@ -4,7 +4,9 @@
     Login
 {% endblock %}
 
+{% if loggedin is none %}
     {{ loggedin | default(False, true) }}
+{% endif %}
     {{ verification | default(False, true) }}
     {{ showlogin | default(True) }}
 
