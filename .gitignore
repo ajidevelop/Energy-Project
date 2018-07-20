@@ -1,0 +1,8 @@
+*.pyc
+.DS_Store
+.*.sw?
+/.pow*
+/.rvmrc
+/.rbenv-version
+.idea/*
+/bin/
