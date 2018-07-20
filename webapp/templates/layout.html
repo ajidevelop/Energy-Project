@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+{#        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/bootstrap.css') }}">#}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/sass/app.css') }}">
+    </head>
+    <body>
+{#  NavBar  #}
+    <header>
+        <img src="{{ url_for('static', filename='assets/functions.jpg') }}" alt="logo" class="logo">
+        <input type="checkbox" class="nav-toggle">
+        <nav>
+            <ul>
+                <li><a>Home</a></li>
+                <li><a>Why?</a></li>
+                <li><a>Test</a></li>
+                <li><a>About</a></li>
+            </ul>
+        </nav>
+    </header>
+        <div class="container">
+            <form action="{{ url_for('index') }}" method="get">
+                <button class="btn btn-primary">Home</button>
+            </form>
+            <div>
+                <p>
+                    text
+                </p>
+            </div>
+            {% block body %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

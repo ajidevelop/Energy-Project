@@ -1,0 +1,72 @@
+@mixin transition($what: all, $time: .2s, $how: ease-in-out) {
+  -webkit-transition: $what $time $how;
+  -moz-transition: $what $time $how;
+  -ms-transition: $what $time $how;
+  -o-transition: $what $time $how;
+  transition: $what $time $how;
+}
+
+$background: #55d6aa;
+
+body {
+  margin: 0;
+  background: #fff;
+  font-weight: 300;
+
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+header {
+  background: $background;
+  text-align: center;
+  position: fixed;
+  z-index: 999;
+  width: 100%;
+
+}
+
+.logo {
+  float: left;
+  padding: 10px 0;
+  height: 100px;
+}
+
+nav {
+  position: absolute;
+  text-align: left;
+  top: 100%;
+  left: 0;
+  background: $background;
+  width: 100%;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    margin-bottom: 1em;
+    margin-left: 1em;
+  }
+
+  a {
+    color: white !important;
+    text-decoration: none;
+    font-size: 1.2em;
+    text-transform: uppercase;
+
+    &:hover {
+      color: #000;
+
+    }
+  }
+}
+
+.nav-toggle:checked ~ nav {
+  display: block;
+}
