@@ -4,42 +4,17 @@
     Login
 {% endblock %}
 
-{% if loggedin is none %}
-    {{ loggedin | default(False, true) }}
+{% if showlogin is not none %}
+    {% set showlogin = True %}
 {% endif %}
-    {{ verification | default(False, true) }}
-    {{ showlogin | default(True) }}
+
 
 {% block body %}
 
-{#    {% if showlogin == True %}#}
-
-        {% if loggedin == True %}
-
-            <form action="{{ url_for('logout') }}" method="post">
-                <input type="text" name="username" placeholder="Enter Username">
-                <input type="text" name="password" placeholder="Enter Password">
-                <button>Log Out</button>
-            </form>
-
-        {% else  %}
-
-            <form action="{{ url_for('login') }}" method="post">
-                <input type="text" name="username" placeholder="Enter Username">
-                <input type="text" name="password" placeholder="Enter Password">
-                <button>Log In</button>
-            </form>
-
-            <form action="{{ url_for('new_user') }}" method="post">
-                <button>Create Account</button>
-            </form>
-
-        {% endif %}
-{#    {% endif %}#}
-
+{#    Verification Starts #}
     {% if verification == True %}
 
-{#        {{ showlogin | False }}#}
+        {% set showlogin = False %}
 
         <form action="{{ url_for('verify') }}" method="post">
             <input type="text" name="token" placeholder="Enter Verification Code">
@@ -50,6 +25,29 @@
             <button>Resend Verification Code</button>
         </form>
 
+    {% endif %}
+{#    Verification Ends   #}
+{#    Login Start    #}
+    {% if showlogin == True %}
+
+        {% if loggedin == True %}
+
+            <form action="{{ url_for('logout') }}" method="post">
+                {% block login_logout %} Logout {% endblock %}
+            </form>
+
+        {% else  %}
+
+            <form action="{{ url_for('login') }}" method="post">
+                <input type="text" name="username" placeholder="Enter Username">
+                <input type="text" name="password" placeholder="Enter Password">
+            </form>
+
+            <form action="{{ url_for('new_user') }}" method="post">
+                <button>Create Account</button>
+            </form>
+
+        {% endif %}
     {% endif %}
 
     <p>

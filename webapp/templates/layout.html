@@ -15,7 +15,7 @@
                     <li><a>Home</a></li>
                     <li><a>Usage</a></li>
                     <li><a>Test</a></li>
-                    <li><a>{% block text %}{% endblock %}o %}</a></li>
+                    <li><button class="transparent-button">{% block login_logout %}{% endblock %}</button></li>
                 </ul>
             </nav>
             <label for="nav-toggle" class="nav-toggle-label">
@@ -23,7 +23,7 @@
             </label>
         </header>
 {#  NavBar ends#}
-        <div class="content ">
+        <div>
             <form action="{{ url_for('index') }}" method="get">
                 <button class="btn btn-primary">Home</button>
             </form>

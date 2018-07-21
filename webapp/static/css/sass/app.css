@@ -3,11 +3,6 @@ body {
   background: #fff;
   font-weight: 300; }
 
-.content {
-  background-color: #333;
-  display: grid;
-  margin-top: 300px; }
-
 header {
   background: #55d6aa;
   text-align: center;
@@ -41,7 +36,7 @@ nav {
   nav li {
     margin-bottom: 1em;
     margin-left: 1em; }
-  nav a {
+  nav a, nav .transparent-button {
     color: white !important;
     text-decoration: none;
     font-size: 1.2em;
@@ -53,7 +48,7 @@ nav {
     -o-transition: opacity 250ms 0.2s ease-in-out;
     transition: opacity 250ms 0.2s ease-in-out;
     transition: opacity 150ms ease-in-out; }
-    nav a:hover {
+    nav a:hover, nav .transparent-button:hover {
       color: #000 !important; }
 
 .nav-toggle {
@@ -64,7 +59,7 @@ nav {
     -ms-transform: scale(1, 1);
     -o-transform: scale(1, 1);
     transform: scale(1, 1); }
-    .nav-toggle:checked ~ nav a {
+    .nav-toggle:checked ~ nav a, .nav-toggle:checked ~ nav .transparent-button {
       opacity: 1;
       transition: opacity 250ms ease-in-out 250ms; }
 
@@ -115,10 +110,10 @@ nav {
     nav li {
       margin-left: 3em;
       margin-bottom: 0; }
-    nav a {
+    nav a, nav .transparent-button {
       opacity: 1;
       position: relative; }
-      nav a::before {
+      nav a::before, nav .transparent-button::before {
         content: '';
         display: block;
         height: 5px;
@@ -137,17 +132,23 @@ nav {
         -ms-transition: transform 250ms ease-in-out;
         -o-transition: transform 250ms ease-in-out;
         transition: transform 250ms ease-in-out; }
-      nav a:hover::before {
+      nav a:hover::before, nav .transparent-button:hover::before {
         -webkit-transform: scale(1, 1);
         -moz-transform: scale(1, 1);
         -ms-transform: scale(1, 1);
         -o-transform: scale(1, 1);
         transform: scale(1, 1); } }
+.transparent-button {
+  background: transparent;
+  border: none;
+  padding: 0; }
+
 body {
-  margin: 0;
   background: #222;
   font-family: 'Works Sans', sans-serif;
-  font-weight: 400; }
+  font-weight: 400;
+  display: grid;
+  margin-top: 300px; }
 
 p {
   font-size: 10px;

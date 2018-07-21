@@ -1,12 +1,13 @@
 @import "navbar";
 
 body {
-  margin: 0;
   background: #222;
   font: {
     family: 'Works Sans', sans-serif;
     weight: 400;
   }
+  display: grid;
+  margin-top: 300px;
 }
 
 p {

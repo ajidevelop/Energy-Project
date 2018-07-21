@@ -23,12 +23,6 @@ body {
 
 }
 
-.content {
-  background-color: #333;
-  display: grid;
-  margin-top: 300px;
-}
-
 header {
   background: $background;
   text-align: center;
@@ -62,7 +56,7 @@ nav {
     margin-left: 1em;
   }
 
-  a {
+  a, .transparent-button {
     color: white !important;
     text-decoration: none;
     font-size: 1.2em;
@@ -84,7 +78,7 @@ nav {
   &:checked ~ nav {
     @include transform(1, 1);
 
-    a {
+    a, .transparent-button {
       opacity: 1;
       transition: opacity 250ms ease-in-out 250ms;
     }
@@ -159,7 +153,7 @@ nav {
       margin-bottom: 0;
     }
 
-    a {
+    a, .transparent-button {
       opacity: 1;
       position: relative;
 
@@ -181,4 +175,11 @@ nav {
       }
     }
   }
+}
+
+
+.transparent-button {
+  background: transparent;
+  border: none;
+  padding: 0;
 }
