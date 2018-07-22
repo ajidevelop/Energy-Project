@@ -12,10 +12,10 @@
             <input type="checkbox" id="nav-toggle" class="nav-toggle">
             <nav>
                 <ul>
-                    <li><a>Home</a></li>
-                    <li><a>Usage</a></li>
-                    <li><a>Test</a></li>
-                    <li><button class="transparent-button">{% block login_logout %}{% endblock %}</button></li>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a>Enter Usage</a></li>
+                    <li><a>Show Usage</a></li>
+                    <li><button class="transparent-button" form="{{ loginButton }}">{{ buttonText }}</button></li>
                 </ul>
             </nav>
             <label for="nav-toggle" class="nav-toggle-label">
@@ -24,9 +24,6 @@
         </header>
 {#  NavBar ends#}
         <div>
-            <form action="{{ url_for('index') }}" method="get">
-                <button class="btn btn-primary">Home</button>
-            </form>
             {% block body %}
             {% endblock %}
         </div>

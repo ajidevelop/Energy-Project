@@ -182,4 +182,8 @@ nav {
   background: transparent;
   border: none;
   padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }

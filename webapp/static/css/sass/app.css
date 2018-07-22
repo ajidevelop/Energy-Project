@@ -142,6 +142,8 @@ nav {
   background: transparent;
   border: none;
   padding: 0; }
+  .transparent-button:hover {
+    text-decoration: underline; }
 
 body {
   background: #222;
