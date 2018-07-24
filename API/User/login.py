@@ -45,13 +45,13 @@ def check_user(u, p):
     return int(dcU.find_user(u, check_if_email(u)))
 
 
-def create_user(u, p, email):
+def create_user(u, p, email, fName, lName):
     try:
         for letter in u:
             for symbol in ("!@#$%^&*()=?/><:;{[]}|"):
                 if symbol == letter:
                     raise error.IntegrityError
-        dcU.new_user(u, p, email)
+        dcU.new_user(u, p, email, fName, lName)
     except error.IntegrityError as exception:
         if str(exception) == str((1062, f"Duplicate entry '{u}' for key 'username'")):
             raise e.TakenField(u, 'username')

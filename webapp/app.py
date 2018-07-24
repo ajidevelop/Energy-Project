@@ -48,22 +48,14 @@ def login():
     try:
         username = request.form.get('username')
         password = request.form.get('password')
-        lop = request.form.get('username')
-        print(lop)
         log = check_user(username, password)
-        print(log)
         return render_template('index.html', text=log, loggedin=True)
     except e.WrongPassword:
-        return render_template('index.html', wrong_credentials=True, showlogin=True)
+        return render_template('index.html', wrong_credentials=True, showlogin=True, text=w_credentials)
     except e.NeedVerificationCode:
         return render_template('index.html', verification=True, showlogin=True)
     except TypeError:
         return render_template('index.html')
-
-
-@app.route('/new_user', methods=['POST', 'GET'])
-def new_user():
-    return render_template('new_user.html')
 
 
 @app.route('/verify', methods=['POST', 'GET'])
@@ -94,18 +86,26 @@ def resend():
 
 @app.route('/create', methods=['POST'])
 def create_user():
-    username = request.form.get('username')
-    password = request.form.get('password')
+    username = request.form.get('username-new')
+    password = request.form.get('password-new')
+    password_retype = request.form.get('password-retype')
     email = request.form.get('email')
+    email_retype = request.form.get('email-retype')
+    fName = request.form.get('fName')
+    lName = request.form.get('lName')
+    if password != password_retype:
+        return render_template('index.html', p_match=True, taken=True)
+    elif email != email_retype:
+        return render_template('index.html', e_match=True, taken=True)
     try:
-        cu(username, password, email)
+        cu(username, password, email, fName, lName)
     except e.TakenField as error:
         if str(error) == f'The username "{username}" is already taken':
-            return render_template('new_user.html', text=error)
+            return render_template('index.html', u_taken=True, taken=True, text=f'The username "{username}" is already taken')
         elif str(error) == f'The email "{email}" is already taken':
-            return render_template('new_user.html', text=error)
+            return render_template('index.html', e_taken=True, taken=True, text=f'The email "{email}" is already taken')
     except e.InvalidEmail:
-        return render_template('new_user.html', text='Please enter a valid email')
+        return render_template('index.html', i_email=True, taken=True, text='Please enter a valid email')
     else:
         return render_template('index.html', text='Verification Code sent to your email')
 

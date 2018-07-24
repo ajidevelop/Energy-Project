@@ -36,80 +36,99 @@
 {#  Login Start    #}
     {% if loggedin == True %}
         <form action="{{ url_for('logout') }}" method="post" id="logout-form"></form>
-
     {% else %}
 
         <div id="modal" class="modal">
-            <form id="modal-content" class="modal-content animate" action="{{ url_for('login') }}" method="post" id="login-form">
-
+{#            Login UI  #}
+            <form id="login-form" class="modal-content animate" action="{{ url_for('login') }}" method="post">
                 <div class="imgcontainer">
                     <span onclick="document.getElementById('modal').style.display='none'" class="close" title="Close Login">&times;
                     </span>
                     <img src="{{ url_for('static', filename='assets/avatar.png') }}" alt="Avatar" id="sample-avatar" class="avatar">
                     {# TODO - REMOVE PICTURE IT DIDNT COME FROM ME #}
                 </div>
-{#            Login UI  #}
-            <div id="logon">
-                <div class="login-container">
-                    <label for="username"><b>Username</b></label>
-                    <input type="text" placeholder="Enter Username" name="username" class="login-input" required>
 
-                    <label for="password"><b>Password</b></label>
-                    <input type="password" placeholder="Enter Password" name="password" class="login-input" required>
+                <div id="logon">
+                    <div class="login-container">
+                        <label for="username"><b>Username</b></label>
+                        <input type="text" placeholder="Enter Username" name="username" class="login-input" required>
 
-                    {% if wrong_credentials == True %}
-                        <p class="wrongpsw">Wrong Username/Password</p>
-                    {% endif %}
+                        <label for="password"><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="password" class="login-input" required>
 
-                    <button type="submit" class="login-button">Login</button>
+                        {% if wrong_credentials == True %}
+                            <p class="wrongpsw">{{ text }}</p>
+                        {% endif %}
 
-                    <label>
-                        <input type="checkbox" checked="checked" name="remember"> Remember me
-                    </label>
+                        <button type="submit" class="login-button">Login</button>
+
+                        <label>
+                            <input type="checkbox" checked="checked" name="remember"> Remember me
+                        </label>
+                    </div>
+
+                    <div class="login-container" style="background-color:#f1f1f1">
+                        <button type="button" onclick="new_user()" class="create-button">Create Account</button>
+                        <span class="psw"><a href="#">Forgot password?</a> </span>
+                    </div>
                 </div>
-
-                <div class="login-container" style="background-color:#f1f1f1">
-                    <button type="button" onclick="new_user()" class="create-button">Create Account</button>
-                    <span class="psw"><a href="#">Forgot password?</a> </span>
-                </div>
-            </div>
+            </form>
 {#            Create User UI    #}
-            <div id="create-account">
-                <div class="login-container">
+            <form id="create-account-form" class="modal-content" action="{{ url_for('create_user') }}" method="post">
+                <div id="create-account">
+
+                    <div class="imgcontainer">
+                        <span onclick="document.getElementById('modal').style.display='none'" class="close" title="Close Login">&times;
+                        </span>
+                    </div>
+
+                    <div class="login-container">
 
                         <label for="fName" style="padding-right: 39%"><b>First Name</b></label>
                         <label for="lName"><b>Last Name</b></label>
-                     <div>
-                        <input type="text" placeholder="First Name" name="fName" class="login-input" required style="width: 49%; float:
-                        left;">
-                        <input type="text" placeholder="Last Name" name="lName" class="login-input" required style="width: 49%; float:
-                        right;">
+
+                         <div>
+                            <input type="text" placeholder="First Name" name="fName" class="login-input" required style="width: 49%; float:
+                            left;">
+                            <input type="text" placeholder="Last Name" name="lName" class="login-input" required style="width: 49%; float:
+                            right;">
+                        </div>
+
+                        <label for="username-new"><b>Username</b></label>
+                        <input type="text" placeholder="Username" name="username-new" class="login-input">
+                        {% if u_taken == True %}
+                            <p class="wrongpsw">{{ text }}</p>
+                        {% endif %}
+
+                        <label for="password-new"><b>Password</b></label>
+                        <input type="password" placeholder="Password" name="password-new" class="login-input">
+
+                        <label for="password-retype"><b>Re-enter your password</b></label>
+                        <input type="password" placeholder="Password" name="password-retype" class="login-input">
+                        {% if p_match == True %}
+                            <p class="wrongpsw">Passwords don't match</p>
+                        {% endif %}
+
+                        <label for="email"><b>Email</b></label>
+                        <input type="text" placeholder="Email" name="email" class="login-input">
+
+                        <label for="email-retype"><b>Re-enter your email</b></label>
+                        <input type="text" placeholder="Email" name="email-retype" class="login-input">
+                        {% if e_match == True %}
+                            <p class="wrongpsw">Emails don't match</p>
+                        {% elif e_taken == True %}
+                            <p class="wrongpsw">{{ text }}</p>
+                        {% endif %}
+
+                        <button type="submit" class="login-button">Create Account</button>
                     </div>
 
-
-                    <label for="username"><b>Username</b></label>
-                    <input type="text" placeholder="Username" name="username" class="login-input">
-
-                    <label for="password"><b>Password</b></label>
-                    <input type="password" placeholder="Password" name="password" class="login-input">
-
-                    <label for="password-retype"><b>Re-enter your password</b></label>
-                    <input type="password" placeholder="Password" name="password-retype" class="login-input">
-
-                    <label for="email"><b>Email</b></label>
-                    <input type="text" placeholder="Email" name="email" class="login-input">
-
-                    <label for="email-retype"><b>Re-enter your email</b></label>
-                    <input type="text" placeholder="Email" name="email-retype" class="login-input">
-                </div>
-
-                <button type="submit" class="login-button">Create Account</button>
-
-                <div class="login-container" style="background-color:#f1f1f1">
-                    <button type="button" onclick="go_back()" class="create-button">Go Back</button>
-                </div>
+                    <div class="login-container" style="background-color:#f1f1f1">
+                        <button type="button" onclick="go_back(create_account_form)" class="create-button">Go Back</button>
+                    </div>
             </div>
             </form>
+
         </div>
 
 {#            <form action="{{ url_for('login') }}" method="post" id="login-form">#}
@@ -131,13 +150,14 @@
 
     {% endif %}
 
-    <p>
-        {{ text }}
-    </p>
 {% endblock %}
 
 {% block script %}
     {% if wrong_credentials == True %}
-        <script>reload()</script>
+        <script>reload(login_form)</script>
+    {% elif taken == True %}
+        <script>reload(create_account_form)</script>
+    {% elif i_email == True %}
+        <script>reload(create_account_form)</script>
     {% endif %}
 {% endblock %}

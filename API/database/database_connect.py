@@ -23,8 +23,8 @@ class Users(db.Model):
     user_since = db.Column(db.TIMESTAMP, default=datetime.datetime.today(), nullable=False)
 
     @staticmethod
-    def new_user(u, p, email):
-        _new_user(u, p, email)
+    def new_user(u, p, email, fName, lName):
+        _new_user(u, p, email, fName, lName)
 
     @staticmethod
     def returning_user(u, p, email=False):
@@ -100,15 +100,15 @@ def connectdb():
     return connection
 
 
-def _new_user(u, p, email):
+def _new_user(u, p, email, fName, lName):
     connection = connectdb()
     p = ph.hash(p)
     ev.verify_email(email)
     try:
         with connection.cursor() as cursor:
             # Create a new record
-            sql = "INSERT INTO `users` (`username`, `password`, `email`, `verified`) VALUES (%s, %s, %s, %s)"
-            cursor.execute(sql, (u, p, email, 'N'))
+            sql = "INSERT INTO `users` (`username`, `password`, `email`, `fName`, `lName`, `verified`) VALUES (%s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, (u, p, email, fName, lName, 'N'))
             token = ev.send_verification_email(email)
             sql = "INSERT INTO `verification` (`uid`, `email`, `token`) VALUES (%s, %s, %s)"
             cursor.execute(sql, (Users.find_user(u), email, token))

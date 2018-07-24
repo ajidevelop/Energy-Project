@@ -1,8 +1,7 @@
 let modal = document.getElementById('modal');
-let modal_content = document.getElementById('modal-content');
-let logon = document.getElementById('logon');
-let create_account = document.getElementById('create-account');
-let img = document.getElementById('sample-avatar');
+let login_form = document.getElementById('login-form');
+let create_account_form = document.getElementById('create-account-form');
+let navbar_checkbox = document.getElementById('nav-toggle');
 
 window.onclick = function (event) {
     if (event.target === modal) {
@@ -12,22 +11,29 @@ window.onclick = function (event) {
 
 function load() {
     modal.style.display='block';
+    navbar_checkbox.checked=false;
 }
 
-function reload() {
+function reload(form) {
     modal.style.display='block';
-    modal_content.classList.add('wrongpsw-animate')
+    if (form !== login_form) {
+        login_form.style.display = 'none';
+        form.style.display = 'block';
+        form.classList.add('wrongpsw-animate');
+    } else if (form === login_form) {
+        login_form.classList.add('wrongpsw-animate')
+    }
+
 }
 
 function new_user() {
-    logon.style.display='none';
-    create_account.style.display='block';
-    img.style.display='none'
+    login_form.style.display='none';
+    create_account_form.style.display='block';
 }
 
-function go_back() {
-    logon.style.display='block';
-    create_account.style.display='none';
-    img.style.display='block'
+function go_back(form) {
+    login_form.style.display='block';
+    form.style.display = 'none';
+    login_form.classList.remove('animate')
 }
 
