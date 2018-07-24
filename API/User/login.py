@@ -42,17 +42,6 @@ def check_user(u, p):
                     sys.exit()
     elif cu is False:
         raise e.WrongPassword
-        # while new_user not in {'q', 'y', 'n'}:
-        #     new_user = input('Enter "y" for yes, "n" for no, or "q" for quit please: ')
-        # if new_user == 'y':
-        #     u, p = create_user()
-        #     check_user(u, p)
-        # elif new_user == 'n':
-        #     u = input('Username or Email: ')
-        #     p = input('Password (Forgot Password? Press F): ')
-        #     check_user(u, p)
-        # elif new_user == 'q':
-        #     sys.exit()
     return int(dcU.find_user(u, check_if_email(u)))
 
 

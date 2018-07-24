@@ -39,6 +39,7 @@ def reroute(rero):
 
 @app.route('/logout', methods=['POST'])
 def logout():
+    lo.user_logged_in = False
     return render_template('index.html', text='Logged Out')
 
 
@@ -53,7 +54,7 @@ def login():
         print(log)
         return render_template('index.html', text=log, loggedin=True)
     except e.WrongPassword:
-        return render_template('index.html', text=w_credentials, showlogin=True)
+        return render_template('index.html', wrong_credentials=True, showlogin=True)
     except e.NeedVerificationCode:
         return render_template('index.html', verification=True, showlogin=True)
     except TypeError:

@@ -8,6 +8,7 @@
     {% set loginButton = 'logout-form' %}
     {% set buttonText = 'Logout' %}
 {% else %}
+    {% set loginstyle = 'width:auto;' %}
     {% set loginButton = 'login-form' %}
     {% set buttonText = 'Login' %}
 {% endif %}
@@ -34,25 +35,75 @@
 {#  Verification Ends   #}
 {#  Login Start    #}
     {% if loggedin == True %}
-
-            <form action="{{ url_for('logout') }}" method="post" id="logout-form"></form>
+        <form action="{{ url_for('logout') }}" method="post" id="logout-form"></form>
 
     {% else %}
 
+        <div id="modal" class="modal">
+            <form id="modal-content" class="modal-content animate" action="{{ url_for('login') }}" method="post" id="login-form">
 
-            <form action="{{ url_for('login') }}" method="post" id="login-form">
-                <input type="text" name="username" placeholder="Enter Username">
-                <input type="text" name="password" placeholder="Enter Password">
-            </form>
+                <div class="imgcontainer">
+                    <span onclick="document.getElementById('modal').style.display='none'" class="close" title="Close Login">&times;
+                    </span>
+                    <img src="{{ url_for('static', filename='assets/avatar.png') }}" alt="Avatar" id="sample-avatar" class="avatar">
+                    {# TODO - REMOVE PICTURE IT DIDNT COME FROM ME #}
+                </div>
+            <div id="logon">
+                <div class="login-container">
+                    <label for="username"><b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="username" class="login-input" required>
 
-            <form action="{{ url_for('new_user') }}" method="post">
-                <button>Create Account</button>
+                    <label for="password"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="password" class="login-input" required>
+
+                    {% if wrong_credentials == True %}
+                        <p class="wrongpsw">Wrong Username/Password</p>
+                    {% endif %}
+
+                    <button type="submit" class="login-button">Login</button>
+
+                    <label>
+                        <input type="checkbox" checked="checked" name="remember"> Remember me
+                    </label>
+                </div>
+
+                <div class="login-container" style="background-color:#f1f1f1">
+                    <button type="button" onclick="new_user()" class="create-button">Create Account</button>
+                    <span class="psw"><a href="#">Forgot password?</a> </span>
+                </div>
+            </div>
+            <div id="create-account">
+
+            </div>
             </form>
+        </div>
+
+{#            <form action="{{ url_for('login') }}" method="post" id="login-form">#}
+{#                <input type="text" name="username" placeholder="Enter Username" class="login-input">#}
+{#                <input type="text" name="password" placeholder="Enter Password" class="login-input">#}
+{#                <button >Login</button>#}
+{#            </form>#}
+
+{#            <form action="{{ url_for('new_user') }}" method="post">#}
+{#                <button>Create Account</button>#}
+{#            </form>#}
 
     {% endif %}
 {#  Login Ends  #}
+{#  Create User Starts  #}
+    {% if create_user == True %}
+
+
+
+    {% endif %}
 
     <p>
         {{ text }}
     </p>
+{% endblock %}
+
+{% block script %}
+    {% if wrong_credentials == True %}
+        <script>reload()</script>
+    {% endif %}
 {% endblock %}

@@ -3,7 +3,7 @@
     <head>
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sass/app.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/app.css') }}">
     </head>
     <body>
 {#  NavBar starts  #}
@@ -15,7 +15,8 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a>Enter Usage</a></li>
                     <li><a>Show Usage</a></li>
-                    <li><button class="transparent-button" form="{{ loginButton }}">{{ buttonText }}</button></li>
+                    <li><button id="login-logout" onclick="load()" style="{{ loginstyle }}"
+                                class="transparent-button" form="{{ loginButton }}">{{ buttonText }}</button></li>
                 </ul>
             </nav>
             <label for="nav-toggle" class="nav-toggle-label">
@@ -28,4 +29,6 @@
             {% endblock %}
         </div>
     </body>
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+    {% block script %} {% endblock %}
 </html>
