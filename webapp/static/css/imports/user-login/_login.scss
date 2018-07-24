@@ -1,5 +1,8 @@
 @import "../variables";
 
+#create-account {
+  display: none;
+}
 
 .login-input {
   &[type=text], &[type=password] {

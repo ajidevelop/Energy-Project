@@ -48,6 +48,7 @@
                     <img src="{{ url_for('static', filename='assets/avatar.png') }}" alt="Avatar" id="sample-avatar" class="avatar">
                     {# TODO - REMOVE PICTURE IT DIDNT COME FROM ME #}
                 </div>
+{#            Login UI  #}
             <div id="logon">
                 <div class="login-container">
                     <label for="username"><b>Username</b></label>
@@ -72,8 +73,39 @@
                     <span class="psw"><a href="#">Forgot password?</a> </span>
                 </div>
             </div>
+{#            Create User UI    #}
             <div id="create-account">
+                <div class="login-container">
 
+                        <label for="fName" style="padding-right: 39%"><b>First Name</b></label>
+                        <label for="lName"><b>Last Name</b></label>
+                     <div>
+                        <input type="text" placeholder="First Name" name="fName" class="login-input" required style="width: 49%; float:
+                        left;">
+                        <input type="text" placeholder="Last Name" name="lName" class="login-input" required style="width: 49%; float:
+                        right;">
+                    </div>
+
+
+                    <label for="username"><b>Username</b></label>
+                    <input type="text" placeholder="Username" name="username" class="login-input">
+
+                    <label for="password"><b>Password</b></label>
+                    <input type="password" placeholder="Password" name="password" class="login-input">
+
+                    <label for="password-retype"><b>Re-enter your password</b></label>
+                    <input type="password" placeholder="Password" name="password-retype" class="login-input">
+
+                    <label for="email"><b>Email</b></label>
+                    <input type="text" placeholder="Email" name="email" class="login-input">
+
+                    <label for="email-retype"><b>Re-enter your email</b></label>
+                    <input type="text" placeholder="Email" name="email-retype" class="login-input">
+                </div>
+
+                <div class="login-container" style="background-color:#f1f1f1">
+                    <button type="button" onclick="go_back()" class="create-button">Go Back</button>
+                </div>
             </div>
             </form>
         </div>
