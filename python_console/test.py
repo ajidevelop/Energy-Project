@@ -56,24 +56,5 @@
 # # if __name__ == '__test__':
 # #     app.run()
 
-
-import webapp.app_config as ac
-from flask import redirect, url_for
-
-app = ac.app
-
-@app.route('/')
-def inde():
-    return redirect(url_for('login'))
-
-@app.route('/<string:rero>')
-def index(rero):
-    return redirect(url_for('login'))
-
-
-@app.route('/log')
-def login():
-    return 'Hello World'
-
-
-app.run()
+app = 'ppee'
+app.capitalize()

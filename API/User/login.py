@@ -51,7 +51,7 @@ def create_user(u, p, email, fName, lName):
             for symbol in ("!@#$%^&*()=?/><:;{[]}|"):
                 if symbol == letter:
                     raise error.IntegrityError
-        dcU.new_user(u, p, email, fName, lName)
+        dcU.new_user(u, p, email, fName.capitalize(), lName.capitalize())
     except error.IntegrityError as exception:
         if str(exception) == str((1062, f"Duplicate entry '{u}' for key 'username'")):
             raise e.TakenField(u, 'username')

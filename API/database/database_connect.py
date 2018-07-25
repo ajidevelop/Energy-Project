@@ -74,8 +74,8 @@ class Verification(db.Model):
     token = db.Column(db.String(30), unique=True, nullable=False)
     ts_create = db.Column(db.TIMESTAMP, default=datetime.datetime.today(), nullable=False)
 
-    @classmethod
-    def check_verification_token(cls, token):
+    @staticmethod
+    def check_verification_token(token):
         return _check_verification_token(token)
 
     @staticmethod

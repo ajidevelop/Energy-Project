@@ -1,21 +1,23 @@
 from API.User.login import check_user, create_user as cu
 import API.User.login as lo
 import API.utilities.exceptions as e
+import API.utilities.strings as s
 from API.database.database_connect import Users as dcU, Verification as dcV
-from . import app as ac
-
+# from . import app as ac
+from webapp.app_config import app as ac
 from flask import render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 app = ac
+app.config['DEBUG'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://python:pyth0n_@ccess@GOSHEN-SPECTRE:3307/db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["CACHE_TYPE"] = "null"
 
 engine = create_engine("mysql+pymysql://python:pyth0n_@ccess@GOSHEN-SPECTRE:3307/db")
 db = scoped_session(sessionmaker(bind=engine))
-
-question = "Would you like to create a new account"
-w_credentials = "Wrong Username/Password"
 
 
 @app.route("/")
@@ -51,7 +53,7 @@ def login():
         log = check_user(username, password)
         return render_template('index.html', text=log, loggedin=True)
     except e.WrongPassword:
-        return render_template('index.html', wrong_credentials=True, showlogin=True, text=w_credentials)
+        return render_template('index.html', wrong_credentials=True, showlogin=True, text=s.w_credentials)
     except e.NeedVerificationCode:
         return render_template('index.html', verification=True, showlogin=True)
     except TypeError:
@@ -64,24 +66,19 @@ def verify():
     if dcV.check_verification_token(token):
         user = dcU.email_verified(False, token)
         lo.user_logged_in = True
-        return render_template('index.html', text=f'Welcome {user}', loggedin=True)
+        return render_template('index.html', tmp_message=True, text=f'Welcome {user}', loggedin=True)
     else:
-        return render_template('index.html', text='Incorrect Verification Code')
-
-
-@app.route('/verify/resend_request', methods=['POST', 'GET'])
-def resend_request():
-    return render_template('email.html')
+        return render_template('index.html', w_verification=True, text='Incorrect Verification Code')
 
 
 @app.route('/verify/resend', methods=['POST'])
 def resend():
-    email = request.form.get('email')
+    email = request.form.get('email-code')
     try:
         dcV.resend_verification(email)
-        return render_template('index.html', text='Email sent')
+        return render_template('index.html', tmp_message=True, text='Email sent')  # TODO - CREATE A TEMP MESSAGE
     except e.NoEmail:
-        return render_template('email.html', text='Email not in system')
+        return render_template('index.html', n_system=True, text='Please enter a valid email in our system or create a new account')
 
 
 @app.route('/create', methods=['POST'])
@@ -107,8 +104,8 @@ def create_user():
     except e.InvalidEmail:
         return render_template('index.html', i_email=True, taken=True, text='Please enter a valid email')
     else:
-        return render_template('index.html', text='Verification Code sent to your email')
+        return render_template('index.html', tmp_message=True, text='Verification Code sent to your email')
 
 
 if __name__ == '__main__':
-    ac.app.run()
+    app.run()

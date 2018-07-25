@@ -1,7 +1,11 @@
 @import "../variables";
 
-#create-account-form {
+#create-account-form, #verification-form, #resend-verification-form, #tmp-message {
   display: none;
+}
+
+.create-button {
+  transform: perspective(1px) translateY(-10%);
 }
 
 .login-input {
@@ -46,7 +50,6 @@ img.avatar {
 
 span.psw {
   float: right;
-  padding-top: 16px;
 }
 
 .modal {
@@ -90,7 +93,8 @@ span.psw {
 .wrongpsw {
   color: red;
   font-size: 14px;
-  padding: 1.5% 0 0 37%;
+  padding: 1.5%;
+  text-align: center;
 }
 
 .animate {
