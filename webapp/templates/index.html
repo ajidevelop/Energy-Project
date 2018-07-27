@@ -20,7 +20,6 @@
     {% if loggedin == True %}
         <form action="{{ url_for('logout') }}" method="post" id="logout-form"></form>
     {% else %}
-
         <div id="modal" class="modal">
 {#            Login UI  #}
             <form id="login-form" class="modal-content animate" action="{{ url_for('login') }}" method="post">

@@ -25,21 +25,6 @@ def check_user(u, p):
             return f'Welcome back {cu}'
         else:
             raise e.NeedVerificationCode()
-            token_entry = input('Verification code (If you have no code or need a new one type n): ')
-            while token_entry == 'n' or not dcV.check_verification_token(token_entry):
-                token_entry = input('Incorrect verification code (If None type n): ')
-            if dcV.check_verification_token(token_entry):
-                dcU.email_verified(dcU.find_email(u, check_if_email(u)))
-                print(f'Welcome {cu}')
-            else:
-                entry = input('You much verify your email to use the program. Would you like to resend verification email? (y/n)')
-                while entry not in {'y', 'n'}:
-                    entry = input('Enter "y" for yes, "n" for no please: ')
-                if entry == 'y':
-                    dcV.resend_verification_email(dcU.find_email(u, check_if_email(u)))
-                    print('Sent')
-                elif entry == 'n':
-                    sys.exit()
     elif cu is False:
         raise e.WrongPassword
     return int(dcU.find_user(u, check_if_email(u)))
@@ -81,4 +66,5 @@ def reset_password(email):
         sys.exit()
 
 
+uid = None
 user_logged_in = False

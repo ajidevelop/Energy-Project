@@ -66,6 +66,14 @@ class Users(db.Model):
     def change_password(email, p):
         return _change_password(email, p)
 
+    @classmethod
+    def check_if_loggedin(cls, uid):
+        return cls.query.filter_by(uid=uid).logged_in
+
+    @staticmethod
+    def logoff(uid):
+        _logoff(uid)
+
 
 class Verification(db.Model):
     __tablename__ = 'verification'
@@ -124,10 +132,13 @@ def _returning_user(u, p, email=False):
             # Read a single record
             if email:
                 sql = "SELECT `uid`, `username`, `password` FROM `users` WHERE `email`=%s"
+                sql1 = "UPDATE `users` SET `logged_in`='Y' WHERE `email`=%s"
             else:
                 sql = "SELECT `uid`, `username`, `password` FROM `users` WHERE `username`=%s"
+                sql1 = "UPDATE `users` SET `logged_in`='Y' WHERE `username`=%s"
             cursor.execute(sql, u)
             result = cursor.fetchone()
+            cursor.execute(sql1, u)
             if Users.verify_password(result, p) is False:
                 return False
     except TypeError:
@@ -195,7 +206,7 @@ def _email_verified(email, token=None):
         result = cursor.execute(sql, email)
     try:
         if result == 1:
-            sql = "DELETE FROM `db`.`verification` WHERE `email`=%s;"
+            sql = "DELETE FROM `db`.`verification` WHERE `email`=%s"
             cursor.execute(sql, email)
             return True, email
         elif result == 0:
@@ -216,6 +227,13 @@ def _change_password(email, p):
             return False
     finally:
         connection.close()
+
+
+def _logoff(uid):
+    connection = connectdb()
+    cursor = connection.cursor()
+    sql = "DELETE FROM `db`.`user_logged_in` WHERE `uid`=%s"
+    cursor.execute(sql, uid)
 
 
 if __name__ == '__main__':

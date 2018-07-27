@@ -56,5 +56,6 @@
 # # if __name__ == '__test__':
 # #     app.run()
 
-app = 'ppee'
-app.capitalize()
+from API.User.login import check_if_email
+
+check_if_email('u')

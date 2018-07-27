@@ -12,9 +12,9 @@
             <input type="checkbox" id="nav-toggle" class="nav-toggle">
             <nav>
                 <ul>
-                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('index') }}" methods="POST">Home</a></li>
                     <li><a>Enter Usage</a></li>
-                    <li><a>Show Usage</a></li>
+                    <li><a href="{{ url_for('show_energy_usage') }}">Show Usage</a></li>
                     <li><button id="login-logout" onclick="load()" style="{{ loginstyle }}"
                                 class="transparent-button" form="{{ loginButton }}">{{ buttonText }}</button></li>
                 </ul>
