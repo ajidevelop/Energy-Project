@@ -26,8 +26,12 @@ class Users(db.Model):
     def new_user(u, p, email, fName, lName):
         _new_user(u, p, email, fName, lName)
 
-    @staticmethod
-    def returning_user(u, p, email=False):
+    @classmethod
+    def returning_user(cls, u, p, email=False):
+        if email:
+            return cls.query.filter_by(email=u, password=p).first()
+        else:
+            return cls.query.filter_by(username=u, password=p).first()
         return _returning_user(u, p, email)
 
     @classmethod
