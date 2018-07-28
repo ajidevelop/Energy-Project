@@ -9,11 +9,12 @@ ph = PasswordHasher()
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 import webapp.app_config as ac
+from flask_login import UserMixin
 
 db = SQLAlchemy(ac.app)
 
 
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     __tablename__ = 'users'
     uid = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
@@ -22,6 +23,10 @@ class Users(db.Model):
     verified = db.Column(db.String(1), nullable=False)
     user_since = db.Column(db.TIMESTAMP, default=datetime.datetime.today(), nullable=False)
 
+    def get_id(self):
+        return self.uid
+
+
     @staticmethod
     def new_user(u, p, email, fName, lName):
         _new_user(u, p, email, fName, lName)
@@ -29,10 +34,15 @@ class Users(db.Model):
     @classmethod
     def returning_user(cls, u, p, email=False):
         if email:
-            return cls.query.filter_by(email=u, password=p).first()
+            find = cls.query.filter_by(email=u).first()
         else:
-            return cls.query.filter_by(username=u, password=p).first()
-        return _returning_user(u, p, email)
+            find = cls.query.filter_by(username=u).first()
+        try:
+            if Users.verify_password(find, p) is False:
+                return False
+        except AttributeError:
+            return False
+        return find
 
     @classmethod
     def find_user(cls, u, email=False):
@@ -51,7 +61,7 @@ class Users(db.Model):
     @staticmethod
     def verify_password(result, p):
         try:
-            ph.verify(result['password'], p)
+            ph.verify(result.password, p)
             return True
         except e.VerifyMismatchError:
             return False
@@ -125,33 +135,6 @@ def _new_user(u, p, email, fName, lName):
             sql = "INSERT INTO `verification` (`uid`, `email`, `token`) VALUES (%s, %s, %s)"
             cursor.execute(sql, (Users.find_user(u), email, token))
             print("Verification code sent to your email.")
-    finally:
-        connection.close()
-
-
-def _returning_user(u, p, email=False):
-    connection = connectdb()
-    try:
-        with connection.cursor() as cursor:
-            # Read a single record
-            if email:
-                sql = "SELECT `uid`, `username`, `password` FROM `users` WHERE `email`=%s"
-                sql1 = "UPDATE `users` SET `logged_in`='Y' WHERE `email`=%s"
-            else:
-                sql = "SELECT `uid`, `username`, `password` FROM `users` WHERE `username`=%s"
-                sql1 = "UPDATE `users` SET `logged_in`='Y' WHERE `username`=%s"
-            cursor.execute(sql, u)
-            result = cursor.fetchone()
-            cursor.execute(sql1, u)
-            if Users.verify_password(result, p) is False:
-                return False
-    except TypeError:
-        return False
-    else:
-        try:
-            return result['username'].title()
-        except TypeError:
-            return False
     finally:
         connection.close()
 
@@ -243,4 +226,4 @@ def _logoff(uid):
 if __name__ == '__main__':
     testUser = Users()
     verify = Verification()
-    _check_verification_token('test')
+    print(testUser.returning_user('test', 'test'))

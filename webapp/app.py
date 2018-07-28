@@ -3,42 +3,45 @@ import API.User.login as lo
 import API.utilities.exceptions as e
 import API.utilities.strings as s
 from API.database.database_connect import Users as dcU, Verification as dcV
-from . import app as ac
-# from webapp.app_config import app as ac
+# from . import app as ac
+from webapp.app_config import app as ac
 from flask import render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from login
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from datetime import timedelta
 
 app = ac
 
 engine = create_engine("mysql+pymysql://python:pyth0n_@ccess@GOSHEN-SPECTRE:3307/db")
 db = scoped_session(sessionmaker(bind=engine))
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 # Login Route
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return dcU.query.get(int(user_id))
+
+
 @app.route("/")
 def index():
-    if lo.user_logged_in is False:
-        return redirect(url_for('login'))
-    else:
-        print(lo.user_logged_in)
-        pass  # set logged in functionality
-        return render_template('entry_page.html')
+    return render_template('index.html', loggedin=current_user.is_active)
+
 
 
 @app.route("/<string:rero>")
 def reroute(rero):
-    if lo.user_logged_in is False:
-        return redirect(url_for('login'))
-    else:
-        pass  # set logged in functionality
-        return render_template('entry_page.html')
+    return render_template('index.html', loggedin=current_user.is_active)
 
 
 @app.route('/logout', methods=['POST'])
+@login_required
 def logout():
+    logout_user()
     lo.user_logged_in = False
     return render_template('index.html', text='Logged Out')
 
@@ -50,11 +53,14 @@ def login():
         password = request.form.get('password')
         log = check_user(username, password)
         if lo.check_if_email(username):
-            lo.uid = dcU.find_user(username, email=True)
+            lo.uid = dcU.returning_user(username, password, True)
         else:
-            lo.uid = dcU.find_user(username)
-        lo.user_logged_in = True
-        return render_template('index.html', text=log, loggedin=lo.user_logged_in)
+            lo.uid = dcU.returning_user(username, password, False)
+        if request.form.get('remember') == 'on':
+            login_user(lo.uid, remember=True, duration=timedelta(seconds=1))
+        else:
+            login_user(lo.uid)
+        return render_template('index.html', text=log, loggedin=current_user.is_active)
     except e.WrongPassword:
         return render_template('index.html', wrong_credentials=True, showlogin=True, text=s.w_credentials)
     except e.NeedVerificationCode:
@@ -69,7 +75,7 @@ def verify():
     if dcV.check_verification_token(token):
         user = dcU.email_verified(False, token)
         lo.user_logged_in = True
-        return render_template('index.html', tmp_message=True, text=f'Welcome {user}', loggedin=lo.user_logged_in)
+        return render_template('index.html', tmp_message=True, text=f'Welcome {user}', loggedin=current_user.is_active)
     else:
         return render_template('index.html', w_verification=True, text='Incorrect Verification Code')
 

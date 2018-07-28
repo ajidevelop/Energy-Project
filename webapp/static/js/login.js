@@ -5,6 +5,7 @@ let navbar_checkbox = document.getElementById('nav-toggle');
 let verification_form = document.getElementById('verification-form');
 let resend_verification_form = document.getElementById('resend-verification-form');
 let temp_message = document.getElementById('tmp-message');
+let rememberme_checkbox = document.getElementById('remember-me');
 
 window.onclick = function (event) {
     if (event.target === modal) {
@@ -53,3 +54,9 @@ function go_back(old_form, new_form=login_form) {
     }
 }
 
+function remember_me(checkbox) {
+    if (checkbox.checked === true) {
+        let rememberform = document.createElement('param');
+        rememberform.createAttribute('name', 'remember')
+    }
+}

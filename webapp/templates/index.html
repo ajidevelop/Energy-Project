@@ -42,10 +42,10 @@
                             <p class="wrongpsw">{{ text }}</p>
                         {% endif %}
 
-                        <button type="submit" class="login-button">Login</button>
+                        <button onclick="remember_me(rememberme_checkbox)" type="submit" class="login-button">Login</button>
 
                         <label>
-                            <input type="checkbox" checked="checked" name="remember"> Remember me
+                            <input id="remember-me" type="checkbox" checked="checked" name="remember"> Remember me
                         </label>
                     </div>
 
