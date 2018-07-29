@@ -4,14 +4,7 @@
     Login
 {% endblock %}
 
-{% if loggedin == True %}
-    {% set loginButton = 'logout-form' %}
-    {% set buttonText = 'Logout' %}
-{% else %}
-    {% set loginstyle = 'width:auto;' %}
-    {% set loginButton = 'login-form' %}
-    {% set buttonText = 'Login' %}
-{% endif %}
+
 
 {% block body %}
 
@@ -42,7 +35,7 @@
                             <p class="wrongpsw">{{ text }}</p>
                         {% endif %}
 
-                        <button onclick="remember_me(rememberme_checkbox)" type="submit" class="login-button">Login</button>
+                        <button type="submit" class="login-button">Login</button>
 
                         <label>
                             <input id="remember-me" type="checkbox" checked="checked" name="remember"> Remember me
@@ -98,6 +91,8 @@
                     {% if e_match == True %}
                         <p class="wrongpsw">Emails don't match</p>
                     {% elif e_taken == True %}
+                        <p class="wrongpsw">{{ text }}</p>
+                    {% elif i_email == True %}
                         <p class="wrongpsw">{{ text }}</p>
                     {% endif %}
 

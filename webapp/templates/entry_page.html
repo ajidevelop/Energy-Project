@@ -1,1 +1,19 @@
-Hello World
+{% extends 'layout.html' %}
+
+{% block title %}Enter Usage{% endblock %}
+
+{% block body %}
+    <div>
+        <form action="{{ url_for('energy_usage_input') }}" method="post" id="energy-usage">
+            <input name="usage-type" type="checkbox" style="display: none;" value="day" max="" checked>
+
+            <label for="usage"><b class="text-white">Enter Usage</b></label>
+            <input type="number" name="usage" placeholder="Usage" required>
+
+            <label for="date"><b class="text-white">Date</b></label>
+            <input name="date" type="date" required>
+
+            <button href="show_usage.html" type="submit">Submit</button>
+        </form>
+    </div>
+{% endblock %}

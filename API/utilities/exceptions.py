@@ -1,8 +1,7 @@
 class DayExist(Exception):
 
-    def __init__(self, arguments):
+    def __init__(self):
         super().__init__("Day Already Exists")
-        self.arguments = arguments
 
 
 class NeedVerificationCode(Exception):

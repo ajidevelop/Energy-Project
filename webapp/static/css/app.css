@@ -284,6 +284,11 @@ span.psw {
   span.psw {
     display: block;
     float: none; } }
+#view-table {
+  width: 90%;
+  padding-left: 10%;
+  padding-right: 10%; }
+
 body {
   background: #222;
   font-family: 'Works Sans', sans-serif;

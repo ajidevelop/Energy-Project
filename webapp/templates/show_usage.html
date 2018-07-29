@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+
+{% block title %}View Energy Usage{% endblock %}
+
+{% block body %}
+    <div>
+        <input type="text" id="search" onkeyup="search()" placeholder="Search for names..">
+        <table id="view-table" class="table">
+            <thead>
+                <tr>
+                    <th><input onclick="check_uncheck()" id="control" type="checkbox"></th>
+                    <th class="">Date</th>
+                    <th class="alert-heading">Usage</th>
+                    <th><button class="btn btn-primary" type="submit" form="delete-entries">Delete Entries</button></th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                <form id="delete-entries" action="{{ url_for('delete_entries') }}" method="post">
+                    {% for position in range(dates|length) %}
+                    <tr>
+                        <td><input type="checkbox" name="child-box" value="{{ dates[position].date }}"></td>
+                        <td class="text-white">{{ dates[position].d_usage }}</td>
+                        <td class="text-white dates">{{ dates[position].date }}</td>
+                    </tr>
+                {% endfor %}
+                </form>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static', filename='js/energy_input.js') }}"></script>
+{% endblock %}

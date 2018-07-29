@@ -66,5 +66,5 @@ def reset_password(email):
         sys.exit()
 
 
-uid = None
+user_class = None
 user_logged_in = False

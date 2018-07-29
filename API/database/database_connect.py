@@ -26,7 +26,6 @@ class Users(db.Model, UserMixin):
     def get_id(self):
         return self.uid
 
-
     @staticmethod
     def new_user(u, p, email, fName, lName):
         _new_user(u, p, email, fName, lName)

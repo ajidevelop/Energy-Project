@@ -5,11 +5,12 @@ import API.utilities.strings as s
 from API.database.database_connect import Users as dcU, Verification as dcV
 # from . import app as ac
 from webapp.app_config import app as ac
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from datetime import timedelta
+from API.database.entries.energy_usage_entry import DayUsage
 
 app = ac
 
@@ -32,7 +33,6 @@ def index():
     return render_template('index.html', loggedin=current_user.is_active)
 
 
-
 @app.route("/<string:rero>")
 def reroute(rero):
     return render_template('index.html', loggedin=current_user.is_active)
@@ -42,7 +42,6 @@ def reroute(rero):
 @login_required
 def logout():
     logout_user()
-    lo.user_logged_in = False
     return render_template('index.html', text='Logged Out')
 
 
@@ -53,13 +52,13 @@ def login():
         password = request.form.get('password')
         log = check_user(username, password)
         if lo.check_if_email(username):
-            lo.uid = dcU.returning_user(username, password, True)
+            lo.user_class = dcU.returning_user(username, password, True)
         else:
-            lo.uid = dcU.returning_user(username, password, False)
+            lo.user_class = dcU.returning_user(username, password, False)
         if request.form.get('remember') == 'on':
-            login_user(lo.uid, remember=True, duration=timedelta(seconds=1))
+            login_user(lo.user_class, remember=True, duration=timedelta(days=3))
         else:
-            login_user(lo.uid)
+            login_user(lo.user_class)
         return render_template('index.html', text=log, loggedin=current_user.is_active)
     except e.WrongPassword:
         return render_template('index.html', wrong_credentials=True, showlogin=True, text=s.w_credentials)
@@ -119,8 +118,35 @@ def create_user():
 # Energy Usage Route
 
 @app.route('/show-energy-usage', methods=['POST', 'GET'])
+@login_required
 def show_energy_usage():
-    print(request.method)
+    view = DayUsage.view_all_daily_usage(current_user.uid)
+    return render_template('show_usage.html', dates=view, loggedin=current_user.is_active)
+
+
+@app.route('/energy-usage-input', methods=['POST', 'GET'])
+@login_required
+def energy_usage_input():
+    try:
+        usage = request.form.get('usage')
+        usage_type = request.form.get('usage-type')
+        date = request.form.get('date')
+        DayUsage.new_day_entry(date, usage, current_user.uid)
+        return redirect('/show-energy-usage')
+    except TypeError:
+        return render_template('entry_page.html', loggedin=current_user.is_active)
+    # if usage_type == 'day':
+    #     try:
+    #         DayUsage.new_day_entry()
+
+
+@app.route('/show-energy-usage/delete', methods=['POST'])
+@login_required
+def delete_entries():
+    child_box = request.form.getlist('child-box')
+    print(child_box)
+    DayUsage.delete_day_entry(child_box, current_user.uid)
+    return redirect('/show-energy-usage')
 
 
 if __name__ == '__main__':
