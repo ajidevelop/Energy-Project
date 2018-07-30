@@ -12,30 +12,33 @@ class DayUsage(db.Model):
     __tablename__ = 'day_usage'
     day_id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(10), nullable=False)
+    day = db.Column(db.String(2), nullable=False)
+    month = db.Column(db.String(2), nullable=False)
+    year = db.Column(db.String(2), nullable=False)
     d_usage = db.Column(db.Integer, nullable=False)
     uid = db.Column(db.ForeignKey('users.uid'), nullable=False)
 
     @staticmethod
     def new_day_entry(date, d_usage, uid):
         date = datetime.datetime.strptime(date, '%Y-%m-%d').strftime('%m/%d/%y')
+        day = datetime.datetime.strptime(date, '%m/%d/%y').strftime('%d')
+        month = datetime.datetime.strptime(date, '%m/%d/%y').strftime('%m')
+        year = datetime.datetime.strptime(date, '%m/%d/%y').strftime('%Y')
         find = len(__class__.query.filter_by(uid=uid, date=date).all())
         print(find)
         if find == 1:
             return e.DayExist
         cursor = dc.connectdb().cursor()
-        sql = 'INSERT INTO `day_usage` (`date`, `d_usage`, `uid`) VALUES (%s, %s, %s)'
-        cursor.execute(sql, (date, d_usage, uid))
+        sql = 'INSERT INTO `day_usage` (`date`, `day`, `month`, `year`, `d_usage`, `uid`) VALUES (%s, %s, %s, %s, %s, %s)'
+        cursor.execute(sql, (date, day, month, year, d_usage, uid))
         dc.connectdb().close()
 
     @classmethod
     def view_all_daily_usage(cls, uid):
-        find = cls.query.filter(cls.uid == uid).order_by(__class__.date).all()
-        position = {}
+        find = cls.query.filter(cls.uid == uid).order_by(__class__.year, __class__.month, __class__.day).all()
         test = {}
         for dates in range(len(find)):
-            position[find[dates].date] = find[dates].d_usage
             test[dates] = find[dates]
-
         return test
 
     @classmethod
@@ -62,7 +65,7 @@ def new_week_entry(date_range, w_usage_input):
 
 if __name__ == '__main__':
     new_user = DayUsage()
-    new_user.new_day_entry('2015-10-12', 14, 64)
+    new_user.new_day_entry('2017-10-12', 14, 64)
 
     for pos in range(len(new_user.view_all_daily_usage(64))):
-        print(f'You used {new_user.view_all_daily_usage(64)[pos].d_usage} on {new_user.view_all_daily_usage(64)[pos].date}')
+        print(f'You used {new_user.view_all_daily_usage(64)[pos].d_usage} on {new_user.view_all_daily_usage(64)[pos].year}')

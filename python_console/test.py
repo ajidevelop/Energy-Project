@@ -1,10 +1,4 @@
-def test(**kwargs):
-    print(kwargs)
+import datetime
 
-
-def hello(**kwargs):
-    for key, value in kwargs.items():
-        test(value)
-
-
-hello(people=123)
+day = datetime.datetime.strptime('2017-06-15', '%Y-%m-%d').strftime('%d')
+print(day)

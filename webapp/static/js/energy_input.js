@@ -1,7 +1,5 @@
 let control_checkboxes = document.getElementById('control');
-let search_input = document.getElementById('search');
-let show_table = document.getElementById('view-table');
-let filter = search_input.value;
+let search_input = document.getElementById('search').value;
 let tbody = document.getElementById('tbody');
 let tr = tbody.getElementsByTagName('tr');
 
@@ -27,7 +25,6 @@ function check_uncheck() {
                     console.log('none');
                     inputs[i].checked = true
                 }
-
             }
         }
     } else if (control_checkboxes.checked===false) {
@@ -48,12 +45,11 @@ function search() {
     for (let i = 0; i < tr.length; i++) {
         let td = tr[i].getElementsByClassName('dates')[0];
         let td_checkbox = tr[i].getElementsByTagName("input")[0];
-        console.log(filter);
-        console.log(td.innerHTML.indexOf(filter));
-        if (td.innerHTML.indexOf(filter) > -1) {
+        console.log(document.getElementById('search').value);
+        console.log(search_input);
+        if (td.innerHTML.indexOf(document.getElementById('search').value) > -1) {
             tr[i].style.display='';
             td_checkbox.style.display='';
-            console.log('this')
         } else {
             tr[i].style.display='none';
             td_checkbox.style.display = 'none'
