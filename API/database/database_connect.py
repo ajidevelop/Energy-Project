@@ -204,7 +204,7 @@ def _email_verified(email, token=None):
 def _change_password(email, p):
     connection = connectdb()
     cursor = connection.cursor()
-    sql = "UPDATE `password` FROM `users` WHERE `email`=%s"
+    sql = "UPDATE `users` SET `password`=%s WHERE `email`=%s"
     result = cursor.execute(sql, (p, email))
     try:
         if result == 1:

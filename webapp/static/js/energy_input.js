@@ -2,7 +2,10 @@ let control_checkboxes = document.getElementById('control');
 let search_input = document.getElementById('search').value;
 let tbody = document.getElementById('tbody');
 let tr = tbody.getElementsByTagName('tr');
-
+let cancel_button = document.getElementById('cancel');
+let update_button = document.getElementById('update');
+let d_usage = document.getElementsByName('usage_d');
+let dates = document.getElementsByName('box-date');
 
 let today = new Date();
 let dd = today.getDate();
@@ -20,10 +23,10 @@ function check_uncheck() {
         let inputs = document.getElementsByTagName('input');
         for (let i = 0; i < inputs.length; i++) {
             if (inputs[i].type === 'checkbox') {
-                console.log(inputs[i]);
                 if (inputs[i].style.display === '') {
-                    console.log('none');
-                    inputs[i].checked = true
+                    if (inputs[i] !== document.getElementById('nav-toggle')) {
+                        inputs[i].checked = true
+                    }
                 }
             }
         }
@@ -31,8 +34,9 @@ function check_uncheck() {
         let inputs = document.getElementsByTagName('input');
         for (let i = 0; i < inputs.length; i++) {
             if (inputs[i].type === 'checkbox') {
-                console.log('works');
-                inputs[i].checked = false
+                if (inputs[i] !== document.getElementById('nav-toggle')){
+                    inputs[i].checked = false
+                }
             }
         }
     }
@@ -55,4 +59,32 @@ function search() {
             td_checkbox.style.display = 'none'
         }
     }
+}
+
+function cancel() {
+
+}
+
+function update_table() {
+    for (let i = 0; i < d_usage.length; i++) {
+        if (d_usage[i].value !== d_usage[i].defaultValue) {
+            let real_input = document.createElement('input');
+            real_input.setAttribute('type', 'hidden');
+            real_input.setAttribute('value', d_usage[i].value);
+            real_input.setAttribute('name', 'd_usage');
+            document.getElementById('update-table').appendChild(real_input);
+            console.log(real_input);
+            let real_date_input = document.createElement('input');
+            real_date_input.setAttribute('type', 'hidden');
+            real_date_input.setAttribute('value', dates[i].value);
+            real_date_input.setAttribute('name', 'date-box');
+            console.log(real_date_input);
+            document.getElementById('update-table').appendChild(real_date_input);
+        }
+    }
+}
+
+function button_appear() {
+    cancel_button.style.display = '';
+    update_button.style.display = ''
 }

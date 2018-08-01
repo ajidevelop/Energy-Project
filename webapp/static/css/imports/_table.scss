@@ -1,5 +1,20 @@
+@import "variables";
+
 #view-table {
   width: 90%;
   padding-left: 10%;
   padding-right: 10%;
+}
+
+.d-usage {
+  background-color: #222;
+  border: none;
+  color: #fff;
+  width: 15%;
+}
+
+.date-input {
+  background-color: #222;
+  border: none;
+  color: #fff;
 }

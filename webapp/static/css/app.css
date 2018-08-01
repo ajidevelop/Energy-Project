@@ -289,6 +289,17 @@ span.psw {
   padding-left: 10%;
   padding-right: 10%; }
 
+.d-usage {
+  background-color: #222;
+  border: none;
+  color: #fff;
+  width: 15%; }
+
+.date-input {
+  background-color: #222;
+  border: none;
+  color: #fff; }
+
 body {
   background: #222;
   font-family: 'Works Sans', sans-serif;

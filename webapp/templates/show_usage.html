@@ -5,7 +5,7 @@
 {% block body %}
     <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
+    <script id="day-usage-table" type="text/javascript">
         google.charts.load('current', {'packages':['line']});
         google.charts.setOnLoadCallback(drawChart);
 
@@ -14,36 +14,73 @@
       let data = new google.visualization.DataTable();
       data.addColumn('date', 'Date');
       data.addColumn('number', 'Usage');
+      data.addColumn('number', 'Average Usage');
 
 
+{% set var = {'high': 0} %}
       data.addRows([
-        {% for position in range(dates|length) %}
-            [new Date({{ dates[position].year }}, {{ dates[position].month }} - 1, {{ dates[position].day }}), {{ dates[position].d_usage
-            }}],
+        {% for position in range(average_dates|length) %}
+             {% if position in dates %}
+                 [new Date({{ dates[position].year }}, {{ dates[position].month }} - 1, {{ dates[position].day }}),
+                     {{ dates[position].d_usage}}, {{ average_dates[position].usage }}],
+            {% if var.high < dates[position].d_usage %}
+                {% set _dummy = var.update({'high': dates[position].d_usage}) %}
+            {% endif %}
+            {% else %}
+                 [ , , {{ average_dates[position].usage }}],
+                {% if var.high < average_dates[position].usage %}
+                    {% set _dummy = var.update({'high': average_dates[position].usage}) %}
+                {% endif %}
+            {% endif %}
         {% endfor %}
       ]);
-
       let options = {
           chart: {
-              title: 'Box Office Earnings in First Two Weeks of Opening',
-              subtitle: 'in millions of dollars (USD)'
+              title: 'Daily Usages',
+              titleTextStyle: {
+                  color: '#fff',
+              },
           },
+          hAxis: {
+              title: 'Dates',
+              titleTextStyle: {
+                  color: '#fff',
+                  fontSize: 20,
+              }
+          },
+          vAxis: {
+                minValue: 0,
+                maxValue: {{ var.high }} + 10,
+                viewWindow: {
+                    min: 0,
+                    max: {{ var.high }} + 10
+                }
+            },
           width: 1000,
           height: 500,
+          backgroundColor: '#222',
           explorer: {
               actions: ['dragToZoom', 'rightClickToReset'],
               axis: 'horizontal',
               keepInBounds: true,
-              maxZoomIn: 4.0
+              maxZoomIn: 4.0,
           }
       };
 
       let chart = new google.charts.Line(document.getElementById('linechart_material'));
 
-      chart.draw(data, google.charts.Line.convertOptions(options));
+          chart.draw(data, google.charts.Line.convertOptions(options));
     }</script>
+    <script id="week-usage-table" type="text/javascript">
+
+    </script>
   </head>
     <div id="linechart_material" style="width: 1000px; margin: 0 auto; height: 500px"></div>
+    <div>
+        <button style="display: none;" id="cancel" onclick="cancel()" class="btn btn-danger">Cancel</button>
+        <button style="display: none;" id="update" onclick="update_table()" type="submit" form="update-table" class="btn btn-primary">Update
+            Table</button>
+    </div>
     <div>
         <input type="text" id="search" onkeyup="search()" placeholder="Search for dates..">
         <table id="view-table" class="table">
@@ -62,13 +99,17 @@
 {#                        Change text to input fields, make them transparent, add onkeyup listener to make table update changes to
                             database #}
                             <td><input type="checkbox" name="child-box" value="{{ dates[position].date }}"></td>
-                            <td class="text-white">{{ dates[position].d_usage }}</td>
-                            <td class="text-white dates">{{ dates[position].date }}</td>
+                            <td class="text-white"><input class="d-usage" name="usage_d" type="number" onkeyup="button_appear()"
+                                                          value="{{dates[position]
+                            .d_usage}}"></td>
+                            <td class="text-white dates"><input class="date-input" name="box-date" readonly value="{{ dates[position]
+                            .date}}"></td>
                         </tr>
                     {% endfor %}
                 </form>
             </tbody>
         </table>
+        <form id="update-table" action="{{ url_for('update_table') }}" method="post"></form>
     </div>
 {% endblock %}
 

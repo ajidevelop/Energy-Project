@@ -121,7 +121,8 @@ def create_user():
 @login_required
 def show_energy_usage():
     view = DayUsage.view_all_daily_usage(current_user.uid)
-    return render_template('show_usage.html', dates=view, loggedin=current_user.is_active)
+    average = DayUsage.average_usage()
+    return render_template('show_usage.html', average_dates=average, dates=view, loggedin=current_user.is_active)
 
 
 @app.route('/energy-usage-input', methods=['POST', 'GET'])
@@ -146,6 +147,17 @@ def delete_entries():
     child_box = request.form.getlist('child-box')
     print(child_box)
     DayUsage.delete_day_entry(child_box, current_user.uid)
+    return redirect('/show-energy-usage')
+
+
+@app.route('/show-energy-usage/update', methods=['POST'])
+@login_required
+def update_table():
+    dates = request.form.getlist('date-box')
+    d_usage = request.form.getlist('d_usage')
+    print(d_usage)
+    print(dates)
+    DayUsage.edit_day_entry(dates, d_usage, current_user.uid)
     return redirect('/show-energy-usage')
 
 
