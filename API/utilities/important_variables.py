@@ -30,3 +30,9 @@ class Average(dict):
     def __delitem__(self, key):
         super(Average, self).__delitem__(key)
         del self.__dict__[key]
+
+class UserAverage(Average):
+
+    def __init__(self):
+        super(UserAverage, self).__init__()
+

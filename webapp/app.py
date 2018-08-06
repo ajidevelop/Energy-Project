@@ -122,6 +122,7 @@ def create_user():
 def show_energy_usage():
     view = DayUsage.view_all_daily_usage(current_user.uid)
     average = DayUsage.average_usage()
+    print(view)
     return render_template('show_usage.html', average_dates=average, dates=view, loggedin=current_user.is_active)
 
 

@@ -57,28 +57,26 @@ class DayUsage(db.Model):
     def average_usage(cls, date=None, month=None, year=None):
         average_properties = Average({'usage': 0})
         if date is not None:
-            dates = cls.query.filter_by(date=date).all()
-            print(dates)
-            average_properties['day'] = datetime.datetime.strptime(date, '%m/%d/%y').strftime('%d')
-            average_properties['month'] = datetime.datetime.strptime(date, '%m/%d/%y').strftime('%m')
-            average_properties['year'] = datetime.datetime.strptime(date, '%m/%d/%y').strftime('%Y')
+            dates = cls.query.filter_by(date=date).order_by(cls.year, cls.month, cls.day).all()
+            average_properties['day'] = int(datetime.datetime.strptime(date, '%m/%d/%y').strftime('%d'))
+            average_properties['month'] = int(datetime.datetime.strptime(date, '%m/%d/%y').strftime('%m'))
+            average_properties['year'] = int(datetime.datetime.strptime(date, '%m/%d/%y').strftime('%Y'))
+            average_properties['date'] = datetime.date(average_properties.year, average_properties.month, average_properties.day)
         elif month is not None:
-            dates = cls.query.filter_by(month=month, year=year).all()
+            dates = cls.query.filter_by(month=month, year=year).order_by(cls.year, cls.month, cls.day).all()
         elif year is not None:
-            dates = cls.query.filter_by(year=year).all()
+            dates = cls.query.filter_by(year=year).order_by(cls.year, cls.month, cls.day).all()
         else:
-            dates = cls.query.all()
+            dates = cls.query.order_by(cls.year, cls.month, cls.day).all()
             average = []
             for item in range(len(dates)):
                 average.append(cls.average_usage(date=dates[item].date))
             return average
 
         for item in range(len(dates)):
-            print(dates[item].d_usage)
             average_properties['usage'] += dates[item].d_usage
 
         average_properties['usage'] /= len(dates)
-        print(average_properties['usage'])
         return average_properties
 
     @classmethod
@@ -125,7 +123,7 @@ if __name__ == '__main__':
     new_user = RandomDateRangeUsage
     # new_user.new_day_entry('2017-10-12', 14, 64)
     test = DayUsage
-    print(test.average_usage)
+    print(test.average_usage())
 
     print(new_user.new_entry(datetime.date(2018, 6, 2), datetime.date(2018, 6, 5), 20, 64))
     # for pos in range(len(new_user.view_all_daily_usage(64))):

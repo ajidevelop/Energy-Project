@@ -17,23 +17,31 @@
       data.addColumn('number', 'Average Usage');
 
 
-{% set var = {'high': 0} %}
+{% set var = {'high': 0, 'var': 0} %}
       data.addRows([
         {% for position in range(average_dates|length) %}
-             {% if position in dates %}
-                 [new Date({{ dates[position].year }}, {{ dates[position].month }} - 1, {{ dates[position].day }}),
-                     {{ dates[position].d_usage}}, {{ average_dates[position].usage }}],
-            {% if var.high < dates[position].d_usage %}
-                {% set _dummy = var.update({'high': dates[position].d_usage}) %}
-            {% endif %}
+            console.log({{ position + var.var}}),
+             {% if (position + var.var) in dates and average_dates[position].year == dates[position + var.var].year and
+             average_dates[position].month == dates[position + var.var].month and average_dates[position].day == dates[position + var
+             .var].day %}
+                 {#[new Date({{ dates[position].year }}, {{ dates[position].month }} - 1, {{ dates[position].day }}),#}
+                 {#    {{ dates[position].d_usage}}, {{ average_dates[position].usage }}],#}
+                 [new Date({{ average_dates[position].year }}, {{ average_dates[position].month }} - 1, {{ average_dates[position].day
+                 }}), {{ dates[position + var.var].d_usage }}, {{average_dates[position].usage }}],
+                {% if var.high < dates[position].d_usage %}{% set _dummy = var.update({'high': dates[position].d_usage}) %}{% endif %}
             {% else %}
-                 [ , , {{ average_dates[position].usage }}],
+                 [new Date({{ average_dates[position].year }}, {{ average_dates[position].month }} - 1, {{ average_dates[position].day }}), ,
+                 {{average_dates[position].usage }}],
+                {% set _dummy = var.update({'var': var.var - 1}) %}
                 {% if var.high < average_dates[position].usage %}
                     {% set _dummy = var.update({'high': average_dates[position].usage}) %}
                 {% endif %}
             {% endif %}
         {% endfor %}
       ]);
+        {% for position in dates %}
+            console.log('{{ position }}');
+        {% endfor %}
       let options = {
           chart: {
               title: 'Daily Usages',
