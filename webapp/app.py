@@ -124,8 +124,16 @@ def show_energy_usage():
     average = DayUsage.average_usage()
     week_view = WeekUsage.view_weekly_usage(current_user.uid)
     week_average = WeekUsage.average_usage()
+    try:
+        d_entries = int(request.form.get('d_entries'))
+    except TypeError:
+        d_entries = request.form.get('d_entries')
+    entries = request.form.get('entries')
+    print(entries)
+    if entries is None:
+        entries = 'all'
     return render_template('show_usage.html', average_dates=average, dates=view, week_average=week_average, week_dates=week_view,
-                           loggedin=current_user.is_active)
+                           loggedin=current_user.is_active, entries=entries, d_entries=d_entries)
 
 
 @app.route('/energy-usage-input', methods=['POST', 'GET'])
@@ -148,7 +156,6 @@ def energy_usage_input():
 @login_required
 def delete_entries():
     child_box = request.form.getlist('child-box')
-    print(child_box)
     DayUsage.delete_day_entry(child_box, current_user.uid)
     return redirect('/show-energy-usage')
 
@@ -158,8 +165,6 @@ def delete_entries():
 def update_table():
     dates = request.form.getlist('date-box')
     d_usage = request.form.getlist('d_usage')
-    print(d_usage)
-    print(dates)
     DayUsage.edit_day_entry(dates, d_usage, current_user.uid)
     return redirect('/show-energy-usage')
 

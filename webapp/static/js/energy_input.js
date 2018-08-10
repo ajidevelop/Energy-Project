@@ -1,5 +1,4 @@
 let control_checkboxes = document.getElementById('control');
-let search_input = document.getElementById('search').value;
 let tbody = document.getElementById('tbody');
 let tr = tbody.getElementsByTagName('tr');
 let cancel_button = document.getElementById('cancel');
@@ -49,8 +48,6 @@ function search() {
     for (let i = 0; i < tr.length; i++) {
         let td = tr[i].getElementsByClassName('dates')[0];
         let td_checkbox = tr[i].getElementsByTagName("input")[0];
-        console.log(document.getElementById('search').value);
-        console.log(search_input);
         if (td.innerHTML.indexOf(document.getElementById('search').value) > -1) {
             tr[i].style.display='';
             td_checkbox.style.display='';
@@ -67,6 +64,8 @@ function cancel() {
             d_usage[i].value = d_usage[i].defaultValue
         }
     }
+    cancel_button.style.display = 'none';
+    update_button.style.display = 'none'
 }
 
 function update_table() {
@@ -77,12 +76,10 @@ function update_table() {
             real_input.setAttribute('value', d_usage[i].value);
             real_input.setAttribute('name', 'd_usage');
             document.getElementById('update-table').appendChild(real_input);
-            console.log(real_input);
             let real_date_input = document.createElement('input');
             real_date_input.setAttribute('type', 'hidden');
             real_date_input.setAttribute('value', dates[i].value);
             real_date_input.setAttribute('name', 'date-box');
-            console.log(real_date_input);
             document.getElementById('update-table').appendChild(real_date_input);
         }
     }

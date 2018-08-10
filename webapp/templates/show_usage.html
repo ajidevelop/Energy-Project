@@ -2,6 +2,12 @@
 
 {% block title %}View Energy Usage{% endblock %}
 
+{% if entries == 'all' %}
+    {% set number_of_entries = {'d_entries': average_dates|length, 'w_entries': week_average|length} %}
+{% else %}
+    {% set number_of_entries = {'d_entries': d_entries, 'w_entries': week_average|length} %}
+{% endif %}
+
 {% block body %}
     <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -10,28 +16,30 @@
         google.charts.load('upcoming', {'packages':['line']});
         google.charts.setOnLoadCallback(day_usage_Chart);
 
+        console.log('{{ number_of_entries.d_entries }}');
+
     function day_usage_Chart() {
 
       let data = new google.visualization.DataTable();
       data.addColumn('date', 'Date');
-      data.addColumn('number', 'Average Usage');
       data.addColumn('number', 'Usage');
+      data.addColumn('number', 'Average Usage');
 
 
 {% set var = {'high': 0, 'var': 0} %}
       data.addRows([
-        {% for position in range(average_dates|length) %}
+        {% for position in range(number_of_entries.d_entries) %}
              {% if (position + var.var) in dates and average_dates[position].year == dates[position + var.var].year and
-             average_dates[position].month == dates[position + var.var].month and average_dates[position].day == dates[position + var
-             .var].day %}
-                 [new Date({{ average_dates[position].year }}, {{ average_dates[position].month }} - 1, {{ average_dates[position].day
-                 }}), {{ dates[position + var.var].d_usage }}, {{average_dates[position].usage }}],
+             average_dates[position].month == dates[position + var.var].month and average_dates[position].day == dates[position + var.var].day %}
+                 [new Date({{ average_dates[-position - 1].year }}, {{ average_dates[-position - 1].month }} - 1, {{
+                 average_dates[-position - 1].day}}), {{ dates[((dates|length - 1) - position) - var.var].d_usage }},
+                     {{average_dates[-position - 1].usage}}],
             {% if var.high < dates[position + var.var].d_usage %}
                 {% set _dummy = var.update({'high': dates[position + var.var].d_usage}) %}
             {% endif %}
             {% else %}
-                 [new Date({{ average_dates[position].year }}, {{ average_dates[position].month }} - 1, {{ average_dates[position].day }}), ,
-                     {{average_dates[position].usage }},],
+                 [new Date({{ average_dates[-position - 1].year }}, {{ average_dates[-position - 1].month }} - 1, {{
+                 average_dates[-position - 1].day}}), ,{{average_dates[-position - 1].usage }},],
                 {% set _dummy = var.update({'var': var.var - 1}) %}
                 {% if var.high < average_dates[position].usage %}
                     {% set _dummy = var.update({'high': average_dates[position].usage}) %}
@@ -39,7 +47,6 @@
             {% endif %}
         {% endfor %}
       ]);
-      console.log('{{ var.high }}');
       let options = {
           chart: {
               title: 'Daily Usages',
@@ -75,13 +82,14 @@
               maxZoomIn: 4.0,
           }
       };
-
       let chart = new google.charts.Line(document.getElementById('linechart_material'));
 
           chart.draw(data, google.charts.Line.convertOptions(options));
     }
 $(window).resize(function(){
-  day_usage_Chart()
+
+  day_usage_Chart();
+
 });
 
 
@@ -94,21 +102,26 @@ $(window).resize(function(){
 
       let data = new google.visualization.DataTable();
       data.addColumn('date', 'Week Date');
-      data.addColumn('number', 'Average Usage');
       data.addColumn('number', 'Usage');
+      data.addColumn('number', 'Average Usage');
 
 
 {% set week_var = {'high': 0, 'var': 0} %}
       data.addRows([
-        {% for position in range(week_average|length) %}
-             {% if (position + var.var) in week_dates and week_average[position].week_start_year == week_dates[position + var.var]
-             .week_start_year and week_average[position].week_start_month == week_dates[position + var.var].week_start_month and
-             week_average[position].week_start_day == week_dates[position + var.var].week_start_day %}
-                 [new Date({{ week_average[position].week_start_year }}, {{ week_average[position].week_start_month }} - 1, {{
-                 week_average[position].week_start_day}}), {{ week_dates[position + var.var].w_usage }}, {{week_average[position].usage }}],
+        {% for position in range(number_of_entries.w_entries) %}
+             {% if (position + week_var.var) in week_dates and week_average[position].week_start_year == week_dates[position + week_var.var]
+             .week_start_year and week_average[position].week_start_month == week_dates[position + week_var.var].week_start_month and
+             week_average[position].week_start_day == week_dates[position + week_var.var].week_start_day %}
+                 [new Date({{ week_average[-position - 1].week_start_year }}, {{ week_average[-position - 1].week_start_month }} - 1, {{
+                 week_average[-position - 1].week_start_day}}), {{ week_dates[(week_dates|length - position - 1) + week_var.var].w_usage }},
+                     {{week_average[-position - 1]
+                 .usage }}],
+                {% if week_var.high < week_dates[position + week_var.var].w_usage %}
+                    {% set _dummy = week_var.update({'high': week_dates[position + week_var.var].w_usage}) %}
+                {% endif %}
             {% else %}
-                 [new Date({{ week_average[position].week_start_year }}, {{ week_average[position].week_start_month }} - 1, {{
-                 week_average[position].week_start_day }}), ,{{week_average[position].usage }}],
+                 [new Date({{ week_average[-position - 1].week_start_year }}, {{ week_average[-position - 1].week_start_month }} - 1, {{
+                 week_average[-position - 1].week_start_day }}), ,{{week_average-[position - 1].usage }}],
                 {% set _dummy = week_var.update({'var': week_var.var - 1}) %}
                 {% if week_var.high < week_average[position].usage %}
                     {% set _dummy = week_var.update({'high': week_average[position].usage}) %}
@@ -162,6 +175,12 @@ $(window).resize(function(){
 
     </script>
   </head>
+    <div style="width: 100%">
+        <form id="reloader" action="{{ url_for('show_energy_usage') }}" method="post">
+            <button onclick="change_view(31)" type="submit" class="btn btn-info" style="margin: -400px auto
+            0">30 days</button>
+        </form>
+    </div>
     <div class="carousel-container">
         <div class="carousel-custom my-carousel">
             <input type="radio" id="1" name="carousel" checked="checked" class="carousel-activator">
@@ -235,4 +254,5 @@ $(window).resize(function(){
 
 {% block script %}
     <script src="{{ url_for('static', filename='js/energy_input.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/show_usage.js') }}"></script>
 {% endblock %}

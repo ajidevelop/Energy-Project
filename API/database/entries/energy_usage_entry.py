@@ -26,11 +26,10 @@ class DayUsage(db.Model):
         find = len(__class__.query.filter_by(uid=uid, date=date).all())
         if find == 1:
             return e.DayExist
-
+        connection = dc.connectdb()
         cursor = connection.cursor()
         sql = 'INSERT INTO `day_usage` (`date`, `day`, `month`, `year`, `d_usage`, `uid`) VALUES (%s, %s, %s, %s, %s, %s)'
         cursor.execute(sql, (date, day, month, year, d_usage, uid))
-
 
     @classmethod
     def view_all_daily_usage(cls, uid):
@@ -110,10 +109,7 @@ class DayUsage(db.Model):
 
     @classmethod
     def create_week_usage(cls, uid):
-        find = len(cls.query.filter_by(uid=uid).all())
-        if find == 1:
-            return None
-        dates = cls.query.order_by(cls.year, cls.month, cls.day).all()
+        dates = cls.query.filter_by(uid=uid).order_by(cls.year, cls.month, cls.day).all()
         w_usage = 0
         for position, item in enumerate(dates):
             w_usage += item.d_usage
@@ -198,6 +194,14 @@ class WeekUsage(db.Model):
             days[dates] = find[dates]
         return days
 
+    @classmethod
+    def delete_usage(cls, uid):
+        connection = dc.connectdb()
+        cursor = connection.cursor()
+        sql = 'DELETE FROM `db`.`week_usage` WHERE `uid`=%s'
+        cursor.execute(sql, uid)
+        connection.close()
+
 
 class RandomDateRangeUsage(db.Model):
     __tablename__ = 'random_date_range_usage'
@@ -260,12 +264,11 @@ if __name__ == '__main__':
     #     date = datetime.datetime.strptime(date, '%Y-%m-%d')
     #     date = date + datetime.timedelta(days=1)
     #     print(date)
-
     test1.create_week_usage(52)
 
     # print(test1.average_usage(str(test1.average_usage()[0].date)))
     # print(test.new_week_entry(datetime.date(2018, 6, 2), 70, 64))
 
-    print(new_user.new_entry('06/02/18', '06/05/18', 20, 64))
+    # print(new_user.new_entry('06/02/18', '06/05/18', 20, 64))
     # for pos in range(len(new_user.view_all_daily_usage(64))):
     #     print(f'You used {new_user.view_all_daily_usage(64)[pos].d_usage} on {new_user.view_all_daily_usage(64)[pos].year}')
