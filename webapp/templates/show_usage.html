@@ -5,33 +5,33 @@
 {% block body %}
     <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script id="day-usage-table" type="text/javascript">
-        google.charts.load('current', {'packages':['line']});
-        google.charts.setOnLoadCallback(drawChart);
+        google.charts.load('upcoming', {'packages':['line']});
+        google.charts.setOnLoadCallback(day_usage_Chart);
 
-    function drawChart() {
+    function day_usage_Chart() {
 
       let data = new google.visualization.DataTable();
       data.addColumn('date', 'Date');
-      data.addColumn('number', 'Usage');
       data.addColumn('number', 'Average Usage');
+      data.addColumn('number', 'Usage');
 
 
 {% set var = {'high': 0, 'var': 0} %}
       data.addRows([
         {% for position in range(average_dates|length) %}
-            console.log({{ position + var.var}}),
              {% if (position + var.var) in dates and average_dates[position].year == dates[position + var.var].year and
              average_dates[position].month == dates[position + var.var].month and average_dates[position].day == dates[position + var
              .var].day %}
-                 {#[new Date({{ dates[position].year }}, {{ dates[position].month }} - 1, {{ dates[position].day }}),#}
-                 {#    {{ dates[position].d_usage}}, {{ average_dates[position].usage }}],#}
                  [new Date({{ average_dates[position].year }}, {{ average_dates[position].month }} - 1, {{ average_dates[position].day
                  }}), {{ dates[position + var.var].d_usage }}, {{average_dates[position].usage }}],
-                {% if var.high < dates[position].d_usage %}{% set _dummy = var.update({'high': dates[position].d_usage}) %}{% endif %}
+            {% if var.high < dates[position + var.var].d_usage %}
+                {% set _dummy = var.update({'high': dates[position + var.var].d_usage}) %}
+            {% endif %}
             {% else %}
                  [new Date({{ average_dates[position].year }}, {{ average_dates[position].month }} - 1, {{ average_dates[position].day }}), ,
-                 {{average_dates[position].usage }}],
+                     {{average_dates[position].usage }},],
                 {% set _dummy = var.update({'var': var.var - 1}) %}
                 {% if var.high < average_dates[position].usage %}
                     {% set _dummy = var.update({'high': average_dates[position].usage}) %}
@@ -39,9 +39,7 @@
             {% endif %}
         {% endfor %}
       ]);
-        {% for position in dates %}
-            console.log('{{ position }}');
-        {% endfor %}
+      console.log('{{ var.high }}');
       let options = {
           chart: {
               title: 'Daily Usages',
@@ -58,14 +56,17 @@
           },
           vAxis: {
                 minValue: 0,
-                maxValue: {{ var.high }} + 10,
+                maxValue: {{ var.high }} + (.2 * {{ var.high }}),
                 viewWindow: {
                     min: 0,
-                    max: {{ var.high }} + 10
+                    max: {{ var.high }} + (.2 * {{ var.high }})
                 }
             },
-          width: 1000,
-          height: 500,
+          series: {
+            0: {
+                color: '#008000',
+            }
+          },
           backgroundColor: '#222',
           explorer: {
               actions: ['dragToZoom', 'rightClickToReset'],
@@ -78,12 +79,124 @@
       let chart = new google.charts.Line(document.getElementById('linechart_material'));
 
           chart.draw(data, google.charts.Line.convertOptions(options));
-    }</script>
+    }
+$(window).resize(function(){
+  day_usage_Chart()
+});
+
+
+    </script>
     <script id="week-usage-table" type="text/javascript">
+        google.charts.load('upcoming', {'packages':['line']});
+        google.charts.setOnLoadCallback(week_usage_Chart);
+
+    function week_usage_Chart() {
+
+      let data = new google.visualization.DataTable();
+      data.addColumn('date', 'Week Date');
+      data.addColumn('number', 'Average Usage');
+      data.addColumn('number', 'Usage');
+
+
+{% set week_var = {'high': 0, 'var': 0} %}
+      data.addRows([
+        {% for position in range(week_average|length) %}
+             {% if (position + var.var) in week_dates and week_average[position].week_start_year == week_dates[position + var.var]
+             .week_start_year and week_average[position].week_start_month == week_dates[position + var.var].week_start_month and
+             week_average[position].week_start_day == week_dates[position + var.var].week_start_day %}
+                 [new Date({{ week_average[position].week_start_year }}, {{ week_average[position].week_start_month }} - 1, {{
+                 week_average[position].week_start_day}}), {{ week_dates[position + var.var].w_usage }}, {{week_average[position].usage }}],
+            {% else %}
+                 [new Date({{ week_average[position].week_start_year }}, {{ week_average[position].week_start_month }} - 1, {{
+                 week_average[position].week_start_day }}), ,{{week_average[position].usage }}],
+                {% set _dummy = week_var.update({'var': week_var.var - 1}) %}
+                {% if week_var.high < week_average[position].usage %}
+                    {% set _dummy = week_var.update({'high': week_average[position].usage}) %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+      ]);
+      let options = {
+          chart: {
+              title: 'Weekly Usages',
+              titleTextStyle: {
+                  color: '#fff',
+              },
+          },
+          hAxis: {
+              title: 'Week Dates',
+              titleTextStyle: {
+                  color: '#fff',
+                  fontSize: 20,
+              }
+          },
+          vAxis: {
+                minValue: 0,
+                maxValue: {{ week_var.high }} + (.2 * {{ week_var.high }}),
+                viewWindow: {
+                    min: 0,
+                    max: {{ week_var.high }} + (.2 * {{ week_var.high }})
+                }
+            },
+          series: {
+            0: {
+                color: '#008000',
+            }
+          },
+          backgroundColor: '#222',
+          explorer: {
+              actions: ['dragToZoom', 'rightClickToReset'],
+              axis: 'horizontal',
+              keepInBounds: true,
+              maxZoomIn: 4.0,
+          }
+      };
+
+      let chart = new google.charts.Line(document.getElementById('week-graph'));
+
+          chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+    $(window).resize(function(){
+        week_usage_Chart()
+    });
 
     </script>
   </head>
-    <div id="linechart_material" style="width: 1000px; margin: 0 auto; height: 500px"></div>
+    <div class="carousel-container">
+        <div class="carousel-custom my-carousel">
+            <input type="radio" id="1" name="carousel" checked="checked" class="carousel-activator">
+            <input type="radio" id="2" name="carousel" class="carousel-activator">
+            <input type="radio" id="3" name="carousel" class="carousel-activator">
+            <div class="carousel-controls">
+                <label for="2" class="carousel-control carousel-control-forward"></label>
+                <label for="3" class="carousel-control carousel-control-backward"></label>
+            </div>
+            <div class="carousel-controls">
+                <label for="3" class="carousel-control carousel-control-forward"></label>
+                <label for="1" class="carousel-control carousel-control-backward"></label>
+            </div>
+            <div class="carousel-controls">
+                <label for="1" class="carousel-control carousel-control-forward"></label>
+                <label for="2" class="carousel-control carousel-control-backward"></label>
+            </div>
+            <div class="carousel-track">
+                <li class="carousel-slide">
+                    <div id="linechart_material" style="width: 75%; margin: 0 auto; height: 500px"></div>
+                </li>
+                <li class="carousel-slide">
+                    <div id="week-graph" style="width: 75%; margin: 0 auto; height: 500px"></div>
+                </li>
+                <li class="carousel-slide">
+                    <h1>3</h1>
+                </li>
+            </div>
+            <div class="carousel-indicators-custom">
+                <label for="1" class="carousel-indicator"></label>
+                <label for="2" class="carousel-indicator"></label>
+                <label for="3" class="carousel-indicator"></label>
+            </div>
+        </div>
+    </div>
     <div>
         <button style="display: none;" id="cancel" onclick="cancel()" class="btn btn-danger">Cancel</button>
         <button style="display: none;" id="update" onclick="update_table()" type="submit" form="update-table" class="btn btn-primary">Update
@@ -108,8 +221,7 @@
                             database #}
                             <td><input type="checkbox" name="child-box" value="{{ dates[position].date }}"></td>
                             <td class="text-white"><input class="d-usage" name="usage_d" type="number" onkeyup="button_appear()"
-                                                          value="{{dates[position]
-                            .d_usage}}"></td>
+                                                          value="{{dates[position].d_usage}}"></td>
                             <td class="text-white dates"><input class="date-input" name="box-date" readonly value="{{ dates[position]
                             .date}}"></td>
                         </tr>

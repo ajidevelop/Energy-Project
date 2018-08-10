@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from datetime import timedelta
-from API.database.entries.energy_usage_entry import DayUsage
+from API.database.entries.energy_usage_entry import DayUsage, WeekUsage, RandomDateRangeUsage
 
 app = ac
 
@@ -122,8 +122,10 @@ def create_user():
 def show_energy_usage():
     view = DayUsage.view_all_daily_usage(current_user.uid)
     average = DayUsage.average_usage()
-    print(view)
-    return render_template('show_usage.html', average_dates=average, dates=view, loggedin=current_user.is_active)
+    week_view = WeekUsage.view_weekly_usage(current_user.uid)
+    week_average = WeekUsage.average_usage()
+    return render_template('show_usage.html', average_dates=average, dates=view, week_average=week_average, week_dates=week_view,
+                           loggedin=current_user.is_active)
 
 
 @app.route('/energy-usage-input', methods=['POST', 'GET'])

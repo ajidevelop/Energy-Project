@@ -300,6 +300,155 @@ span.psw {
   border: none;
   color: #fff; }
 
+.carousel-custom {
+  height: 500px;
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
+  position: relative;
+  padding: 0;
+  list-style: none; }
+.carousel-controls, .carousel-activator {
+  display: none; }
+.carousel-activator:nth-of-type(1):checked ~ .carousel-track {
+  transform: translateX(0%);
+  -webkit-transform: translateX(0%); }
+.carousel-activator:nth-of-type(1):checked ~ .carousel-slide:nth-of-type(1) {
+  transition: opacity 0.5s, transform 0.5s, -webkit-transform 0.5s;
+  top: 0;
+  left: 0;
+  right: 0;
+  opacity: 1;
+  transform: scale(1);
+  -webkit-transform: scale(1); }
+.carousel-activator:nth-of-type(1):checked ~ .carousel-controls:nth-of-type(1) {
+  display: block;
+  opacity: 1; }
+.carousel-activator:nth-of-type(1):checked ~ .carousel-indicators-custom .carousel-indicator:nth-of-type(1) {
+  opacity: 1; }
+.carousel-activator:nth-of-type(2):checked ~ .carousel-track {
+  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%); }
+.carousel-activator:nth-of-type(2):checked ~ .carousel-slide:nth-of-type(2) {
+  transition: opacity 0.5s, transform 0.5s, -webkit-transform 0.5s;
+  top: 0;
+  left: 0;
+  right: 0;
+  opacity: 1;
+  transform: scale(1);
+  -webkit-transform: scale(1); }
+.carousel-activator:nth-of-type(2):checked ~ .carousel-controls:nth-of-type(2) {
+  display: block;
+  opacity: 1; }
+.carousel-activator:nth-of-type(2):checked ~ .carousel-indicators-custom .carousel-indicator:nth-of-type(2) {
+  opacity: 1; }
+.carousel-activator:nth-of-type(3):checked ~ .carousel-track {
+  transform: translateX(-200%);
+  -webkit-transform: translateX(-200%); }
+.carousel-activator:nth-of-type(3):checked ~ .carousel-slide:nth-of-type(3) {
+  transition: opacity 0.5s, transform 0.5s, -webkit-transform 0.5s;
+  top: 0;
+  left: 0;
+  right: 0;
+  opacity: 1;
+  transform: scale(1);
+  -webkit-transform: scale(1); }
+.carousel-activator:nth-of-type(3):checked ~ .carousel-controls:nth-of-type(3) {
+  display: block;
+  opacity: 1; }
+.carousel-activator:nth-of-type(3):checked ~ .carousel-indicators-custom .carousel-indicator:nth-of-type(3) {
+  opacity: 1; }
+.carousel-control {
+  height: 30px;
+  width: 30px;
+  margin-top: -15px;
+  top: 50%;
+  position: absolute;
+  display: block;
+  cursor: pointer;
+  border-width: 5px 5px 0 0;
+  border-style: solid;
+  border-color: #fafafa;
+  opacity: .35;
+  outline: 0;
+  z-index: 3; }
+  .carousel-control:hover {
+    opacity: 1; }
+  .carousel-control-backward {
+    left: 10px;
+    transform: rotate(-135deg); }
+  .carousel-control-forward {
+    right: 10px;
+    transform: rotate(45deg); }
+.carousel-indicators {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center; }
+.carousel-indicator {
+  height: 15px;
+  width: 15px;
+  border-radius: 100%;
+  display: inline-block;
+  z-index: 2;
+  cursor: pointer;
+  opacity: .35;
+  margin: 0 2.5px 0 2.5px; }
+  .carousel-indicator:hover {
+    opacity: .75; }
+.carousel-track {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0;
+  transition: transform 0.5s ease 0s; }
+  .carousel-track .carousel-slide {
+    display: block;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 1; }
+    .carousel-track .carousel-slide:nth-of-type(1) {
+      transform: translateX(0%); }
+    .carousel-track .carousel-slide:nth-of-type(2) {
+      transform: translateX(100%); }
+    .carousel-track .carousel-slide:nth-of-type(3) {
+      transform: translateX(200%); }
+.carousel-scale .carousel-slide {
+  transform: scale(0); }
+.carousel-slide {
+  height: 100%;
+  position: absolute;
+  overflow-y: auto;
+  opacity: 0; }
+.carousel-container {
+  width: 95%;
+  display: inline-block;
+  margin-top: -200px; }
+.carousel-thumb .carousel-indicator {
+  height: 30px;
+  width: 30px; }
+
+.my-carousel {
+  border-radius: 5px;
+  margin: 30px; }
+
+.carousel-slide {
+  overflow: hidden; }
+
+.h1 {
+  font-size: 50px;
+  line-height: 50px;
+  color: #fafafa;
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  margin-top: -25px; }
+
 body {
   background: #222;
   font-family: 'Works Sans', sans-serif;

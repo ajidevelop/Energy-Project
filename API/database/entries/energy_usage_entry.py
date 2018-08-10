@@ -4,6 +4,7 @@ from API.database.database_connect import db
 import datetime
 import API.utilities.exceptions as e
 from API.utilities.important_variables import Average
+import random
 
 
 class DayUsage(db.Model):
@@ -25,36 +26,64 @@ class DayUsage(db.Model):
         find = len(__class__.query.filter_by(uid=uid, date=date).all())
         if find == 1:
             return e.DayExist
-        cursor = dc.connectdb().cursor()
+
+        cursor = connection.cursor()
         sql = 'INSERT INTO `day_usage` (`date`, `day`, `month`, `year`, `d_usage`, `uid`) VALUES (%s, %s, %s, %s, %s, %s)'
         cursor.execute(sql, (date, day, month, year, d_usage, uid))
-        dc.connectdb().close()
+
 
     @classmethod
     def view_all_daily_usage(cls, uid):
-        find = cls.query.filter(cls.uid == uid).order_by(__class__.year, __class__.month, __class__.day).all()
-        test = {}
+        find = cls.query.filter(cls.uid == uid).order_by(cls.year, cls.month, cls.day).all()
+        days = {}
         for dates in range(len(find)):
-            test[dates] = find[dates]
-        return test
+            days[dates] = find[dates]
+        cls.create_week_usage(uid)
+        return days
 
     @classmethod
     def delete_day_entry(cls, dates, uid):
-        cursor = dc.connectdb().cursor()
+        connection = dc.connectdb()
+        cursor = connection.cursor()
         for date in dates:
-            sql = 'DELETE FROM `db`.`day_usage` WHERE (`date`=%s AND `uid`=%s)'
-            cursor.execute(sql, (date, uid))
-        dc.connectdb().close()
+            try:
+                day_number = int(datetime.datetime.strptime(date, '%m/%d/%y').strftime('%w'))
+                date1 = datetime.datetime.strptime(date, '%m/%d/%y')
+                date2 = date1 - datetime.timedelta(days=day_number)
+                find = WeekUsage.query.filter_by(week_start_date=date2, uid=uid).first()
+                finder = cls.query.filter_by(date=date, uid=uid).first()
+                w_usage = find.w_usage - finder.d_usage
+                sql = 'UPDATE `week_usage` SET `w_usage`=%s WHERE (`week_start_date`=%s AND `uid`=%s)'
+                cursor.execute(sql, (w_usage, date2, uid))
+            except AttributeError:
+                pass
+            finally:
+                sql = 'DELETE FROM `db`.`day_usage` WHERE (`date`=%s AND `uid`=%s)'
+                cursor.execute(sql, (date, uid))
+        connection.close()
 
     @classmethod
     def edit_day_entry(cls, date, usage, uid):
-        cursor = dc.connectdb().cursor()
-        sql = 'UPDATE `day_usage` SET `d_usage`=%s WHERE (`date`=%s AND `uid`=%s)'
-        cursor.execute(sql, (usage, date, uid))
-        dc.connectdb().close()
+        connection = dc.connectdb()
+        cursor = connection.cursor()
+        try:
+            day_number = int(datetime.datetime.strptime(date, '%m/%d/%y').strftime('%w'))
+            date1 = datetime.datetime.strptime(date, '%m/%d/%y')
+            date2 = date1 - datetime.timedelta(days=day_number)
+            find = WeekUsage.query.filter_by(week_start_date=date2, uid=uid).first()
+            finder = cls.query.filter_by(date=date, uid=uid).first()
+            w_usage = find.w_usage - finder.d_usage + usage
+            sql = 'UPDATE `week_usage` SET `w_usage`=%s WHERE (`week_start_date`=%s AND `uid`=%s)'
+            cursor.execute(sql, (w_usage, date2, uid))
+        except AttributeError:
+            pass
+        finally:
+            sql = 'UPDATE `day_usage` SET `d_usage`=%s WHERE (`date`=%s AND `uid`=%s)'
+            cursor.execute(sql, (usage, date, uid))
+        connection.close()
 
     @classmethod
-    def average_usage(cls, date=None, month=None, year=None):
+    def average_usage(cls, date=None):
         average_properties = Average({'usage': 0})
         if date is not None:
             dates = cls.query.filter_by(date=date).order_by(cls.year, cls.month, cls.day).all()
@@ -62,16 +91,16 @@ class DayUsage(db.Model):
             average_properties['month'] = int(datetime.datetime.strptime(date, '%m/%d/%y').strftime('%m'))
             average_properties['year'] = int(datetime.datetime.strptime(date, '%m/%d/%y').strftime('%Y'))
             average_properties['date'] = datetime.date(average_properties.year, average_properties.month, average_properties.day)
-        elif month is not None:
-            dates = cls.query.filter_by(month=month, year=year).order_by(cls.year, cls.month, cls.day).all()
-        elif year is not None:
-            dates = cls.query.filter_by(year=year).order_by(cls.year, cls.month, cls.day).all()
         else:
             dates = cls.query.order_by(cls.year, cls.month, cls.day).all()
             average = []
+            averages = []
             for item in range(len(dates)):
-                average.append(cls.average_usage(date=dates[item].date))
-            return average
+                average.append(cls.average_usage(dates[item].date))
+            for i in average:
+                if i not in averages:
+                    averages.append(i)
+            return averages
 
         for item in range(len(dates)):
             average_properties['usage'] += dates[item].d_usage
@@ -80,22 +109,94 @@ class DayUsage(db.Model):
         return average_properties
 
     @classmethod
-    def date_range(cls, start_date, end_date):
-        date_range = cls.query.filter
+    def create_week_usage(cls, uid):
+        find = len(cls.query.filter_by(uid=uid).all())
+        if find == 1:
+            return None
+        dates = cls.query.order_by(cls.year, cls.month, cls.day).all()
+        w_usage = 0
+        for position, item in enumerate(dates):
+            w_usage += item.d_usage
+            weekday = int(datetime.datetime.strptime(item.date, '%m/%d/%y').strftime('%w'))
+            if weekday == 0:
+                try:
+                    week = []
+                    for i in range(len(dates[position: position + 7])):
+                        days = datetime.datetime.strptime(dates[position + i].date, '%m/%d/%y') \
+                        - datetime.datetime.strptime(dates[position + i - 1].date, '%m/%d/%y')
+                        if i == 0:
+                            week.append(dates[position])
+                        elif days.days == 1:
+                            week.append(dates[position + i])
+                        else:
+                            break
+                except AttributeError:
+                    pass
+                else:
+                    if len(week) == 7:
+                        WeekUsage.new_week_entry(datetime.datetime.strptime(week[0].date, '%m/%d/%y').strftime('%Y-%m-%d'), w_usage, uid)
+                        w_usage = 0
 
 
 class WeekUsage(db.Model):
     __tablename__ = 'week_usage'
     week_id = db.Column(db.Integer, primary_key=True)
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=False)
+    week_start_date = db.Column(db.Date, nullable=False)
+    week_start_year = db.Column(db.Integer, nullable=False)
+    week_start_month = db.Column(db.Integer, nullable=False)
+    week_start_day = db.Column(db.Integer, nullable=False)
     w_usage = db.Column(db.Integer, nullable=False)
     uid = db.Column(db.ForeignKey('users.uid'), nullable=False)
 
     @classmethod
-    def new_week_entry(cls, start_date, end_date, w_usage_input, uid):
-        find = cls.query.filter_by(start_date=start_date, end_date=end_date, uid=uid).first()
-        print(find)
+    def new_week_entry(cls, week_start_date, w_usage_input, uid):
+        find = len(cls.query.filter_by(week_start_date=week_start_date, uid=uid).all())
+        day = datetime.datetime.strptime(week_start_date, '%Y-%m-%d').strftime('%d')
+        month = datetime.datetime.strptime(week_start_date, '%Y-%m-%d').strftime('%m')
+        year = datetime.datetime.strptime(week_start_date, '%Y-%m-%d').strftime('%Y')
+        if find == 1:
+            return e.DayExist
+        connection = dc.connectdb()
+        cursor = connection.cursor()
+        sql = 'INSERT INTO `week_usage` (week_start_date, `week_start_day`, `week_start_month`, `week_start_year`, `w_usage`, `uid`) ' \
+              'VALUES (%s, %s, %s, %s, %s, %s)'
+        cursor.execute(sql, (week_start_date, day, month, year, w_usage_input, uid))
+        connection.close()
+
+    @classmethod
+    def average_usage(cls, week_start_date=None):
+        average_properties = Average({'usage': 0})
+        if week_start_date is not None:
+            dates = cls.query.filter_by(week_start_date=week_start_date).order_by(cls.week_start_date).all()
+            average_properties['week_start_day'] = int(datetime.datetime.strptime(week_start_date, '%Y-%m-%d').strftime('%d'))
+            average_properties['week_start_month'] = int(datetime.datetime.strptime(week_start_date, '%Y-%m-%d').strftime('%m'))
+            average_properties['week_start_year'] = int(datetime.datetime.strptime(week_start_date, '%Y-%m-%d').strftime('%Y'))
+            average_properties['week_start_date'] = datetime.date(average_properties.week_start_year, average_properties.week_start_month,
+                                                                  average_properties.week_start_day)
+        else:
+            dates = cls.query.order_by(cls.week_start_year, cls.week_start_month, cls.week_start_day).all()
+            average = []
+            averages = []
+            for item in range(len(dates)):
+                average.append(cls.average_usage(week_start_date=str(dates[item].week_start_date)))
+            for i in average:
+                if i not in averages:
+                    averages.append(i)
+            return averages
+
+        for item in range(len(dates)):
+            average_properties['usage'] += dates[item].w_usage
+
+        average_properties['usage'] /= len(dates)
+        return average_properties
+
+    @classmethod
+    def view_weekly_usage(cls, uid):
+        find = cls.query.filter_by(uid=uid).order_by(cls.week_start_year, cls.week_start_month, cls.week_start_day).all()
+        days = {}
+        for dates in range(len(find)):
+            days[dates] = find[dates]
+        return days
 
 
 class RandomDateRangeUsage(db.Model):
@@ -108,23 +209,63 @@ class RandomDateRangeUsage(db.Model):
 
     @classmethod
     def new_entry(cls, start_date, end_date, usage, uid):
-        random_range = end_date - start_date
+        start_date_datetime = datetime.datetime.strptime(start_date, '%m/%d/%y')
+        end_date_datetime = datetime.datetime.strptime(end_date, '%m/%d/%y')
+        random_range = end_date_datetime - start_date_datetime
+        average_usage = usage / random_range.days
+        dates = []
         if random_range.days < 7:
-            average_usage = usage / random_range.days
-            dates = []
             for days in range(random_range.days):
-                dates.append(start_date)
-                start_date = datetime.timedelta(days=1) + start_date
+                dates.append(start_date_datetime.strftime('%Y-%m-%d'))
+                start_date_datetime = datetime.timedelta(days=1) + start_date_datetime
             for day in range(random_range.days):
                 DayUsage.new_day_entry(str(dates[day]), average_usage, uid)
+        if 7 <= random_range.days < 30:
+            for days in range(random_range.days):
+                dates.append(start_date_datetime.strftime('%Y-%m-%d'))
+                start_date_datetime = datetime.timedelta(days=1) + start_date_datetime
+            for position, date in enumerate(dates):
+                weekday = int(datetime.datetime.strptime(date, '%Y-%m-%d').strftime('%w'))
+                if weekday == 0:
+                    try:
+                        if len(dates[position:]) < 7:
+                            week = []
+                            for i in dates[position:]:
+                                week.append(i)
+                        else:
+                            week = []
+                            for i in range(len(dates[position: position + 7])):
+                                week.append(dates[position + i])
+                    except AttributeError:
+                        pass
+                    else:
+                        if len(week) == 7:
+                            WeekUsage.new_week_entry(week[0], average_usage, uid)
+                        else:
+                            for dates in week:
+                                DayUsage.new_day_entry(dates, average_usage, uid)
 
 
 if __name__ == '__main__':
     new_user = RandomDateRangeUsage
-    # new_user.new_day_entry('2017-10-12', 14, 64)
-    test = DayUsage
-    print(test.average_usage())
+    test = WeekUsage
+    test1 = DayUsage
+    test2 = Average
+    # test1.new_day_entry('2018-10-30', 35, 64)
+    # date = datetime.datetime.strptime('1/1/18', '%m/%d/%y')
+    # print(date)
+    # for day in range(365):
+    #     date = date.strftime('%Y-%m-%d')
+    #     test1.new_day_entry(date, random.randrange(10, 50), 52)
+    #     date = datetime.datetime.strptime(date, '%Y-%m-%d')
+    #     date = date + datetime.timedelta(days=1)
+    #     print(date)
 
-    print(new_user.new_entry(datetime.date(2018, 6, 2), datetime.date(2018, 6, 5), 20, 64))
+    test1.create_week_usage(52)
+
+    # print(test1.average_usage(str(test1.average_usage()[0].date)))
+    # print(test.new_week_entry(datetime.date(2018, 6, 2), 70, 64))
+
+    print(new_user.new_entry('06/02/18', '06/05/18', 20, 64))
     # for pos in range(len(new_user.view_all_daily_usage(64))):
     #     print(f'You used {new_user.view_all_daily_usage(64)[pos].d_usage} on {new_user.view_all_daily_usage(64)[pos].year}')

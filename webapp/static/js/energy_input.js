@@ -62,7 +62,11 @@ function search() {
 }
 
 function cancel() {
-
+    for (let i = 0; i < d_usage.length; i++) {
+        if (d_usage[i].value !== d_usage[i].defaultValue) {
+            d_usage[i].value = d_usage[i].defaultValue
+        }
+    }
 }
 
 function update_table() {
