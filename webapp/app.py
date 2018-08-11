@@ -126,14 +126,16 @@ def show_energy_usage():
     week_average = WeekUsage.average_usage()
     try:
         d_entries = int(request.form.get('d_entries'))
+        w_entries = int(request.form.get('w_entries'))
     except TypeError:
         d_entries = request.form.get('d_entries')
+        w_entries = request.form.get('w_entries')
+    print(d_entries)
     entries = request.form.get('entries')
-    print(entries)
     if entries is None:
         entries = 'all'
     return render_template('show_usage.html', average_dates=average, dates=view, week_average=week_average, week_dates=week_view,
-                           loggedin=current_user.is_active, entries=entries, d_entries=d_entries)
+                           loggedin=current_user.is_active, entries=entries, d_entries=d_entries, w_entries=w_entries)
 
 
 @app.route('/energy-usage-input', methods=['POST', 'GET'])
