@@ -1,7 +1,6 @@
 # Challenges Faced
 
-- [Challenges Faced](#challenges-faced)
-    - [Monthly Usage based on Weekly Usage](#monthly-usage-based-on-weekly-usage)
+- [Monthly Usage based on Weekly Usage](#monthly-usage-based-on-weekly-usage)
 
 ### Monthly Usage based on Weekly Usage
 
