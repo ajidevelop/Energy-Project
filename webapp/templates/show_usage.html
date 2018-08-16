@@ -8,213 +8,173 @@
     {% set number_of_entries = {'d_entries': d_entries, 'w_entries': w_entries} %}
 {% endif %}
 
-{% block body %}
-    <head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script id="day-usage-table" type="text/javascript">
-        google.charts.load('upcoming', {'packages':['line']});
-        google.charts.setOnLoadCallback(day_usage_Chart);
+{% block head %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script id="day-usage-table" type="text/javascript">
+    google.charts.load('upcoming', {'packages':['line']});
+    google.charts.setOnLoadCallback(day_usage_Chart);
 
-        console.log('{{ average_dates|length }}');
-    function day_usage_Chart() {
+    console.log('{{ average_dates|length }}');
+function day_usage_Chart() {
 
-      let data = new google.visualization.DataTable();
-      data.addColumn('date', 'Date');
-      data.addColumn('number', 'Usage');
-      data.addColumn('number', 'Average Usage');
+  let data = new google.visualization.DataTable();
+  data.addColumn('date', 'Date');
+  data.addColumn('number', 'Usage');
+  data.addColumn('number', 'Average Usage');
 
 
 {% set var = {'high': 0, 'var': 0} %}
-      data.addRows([
-        {% for position in range(number_of_entries.d_entries|int) %}
-             {% if (position + var.var) in dates and average_dates[position].year == dates[position + var.var].year and
-             average_dates[position].month == dates[position + var.var].month and average_dates[position].day == dates[position + var.var].day %}
-                 [new Date({{ average_dates[-position - 1].year }}, {{ average_dates[-position - 1].month }} - 1, {{
-                 average_dates[-position - 1].day}}), {{ dates[((dates|length - 1) - position) - var.var].d_usage }},
-                     {{average_dates[-position - 1].usage}}],
-            {% if var.high < dates[position + var.var].d_usage %}
-                {% set _dummy = var.update({'high': dates[position + var.var].d_usage}) %}
+  data.addRows([
+    {% for position in range(number_of_entries.d_entries) %}
+         {% if (position + var.var) in dates and average_dates[position].year == dates[position + var.var].year and
+         average_dates[position].month == dates[position + var.var].month and average_dates[position].day == dates[position + var.var].day %}
+             [new Date({{ average_dates[-position - 1].year }}, {{ average_dates[-position - 1].month }} - 1, {{
+             average_dates[-position - 1].day}}), {{ dates[((dates|length - 1) - position) - var.var].d_usage }},
+                 {{average_dates[-position - 1].usage}}],
+        {% if var.high < dates[position + var.var].d_usage %}
+            {% set _dummy = var.update({'high': dates[position + var.var].d_usage}) %}
+        {% endif %}
+        {% else %}
+             [new Date({{ average_dates[-position - 1].year }}, {{ average_dates[-position - 1].month }} - 1, {{
+             average_dates[-position - 1].day}}), ,{{average_dates[-position - 1].usage }},],
+            {% set _dummy = var.update({'var': var.var - 1}) %}
+            {% if var.high < average_dates[position].usage %}
+                {% set _dummy = var.update({'high': average_dates[position].usage}) %}
             {% endif %}
-            {% else %}
-                 [new Date({{ average_dates[-position - 1].year }}, {{ average_dates[-position - 1].month }} - 1, {{
-                 average_dates[-position - 1].day}}), ,{{average_dates[-position - 1].usage }},],
-                {% set _dummy = var.update({'var': var.var - 1}) %}
-                {% if var.high < average_dates[position].usage %}
-                    {% set _dummy = var.update({'high': average_dates[position].usage}) %}
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-      ]);
-      let options = {
-          chart: {
-              title: 'Daily Usages',
-              titleTextStyle: {
-                  color: '#fff',
-              },
+        {% endif %}
+    {% endfor %}
+  ]);
+  let options = {
+      chart: {
+          title: 'Daily Usages',
+          titleTextStyle: {
+              color: '#fff',
           },
-          hAxis: {
-              title: 'Dates',
-              titleTextStyle: {
-                  color: '#fff',
-                  fontSize: 20,
-              }
-          },
-          vAxis: {
-                minValue: 0,
-                maxValue: {{ var.high }} + (.2 * {{ var.high }}),
-                viewWindow: {
-                    min: 0,
-                    max: {{ var.high }} + (.2 * {{ var.high }})
-                }
-            },
-          series: {
-            0: {
-                color: '#008000',
-            }
-          },
-          backgroundColor: '#222',
-          explorer: {
-              actions: ['dragToZoom', 'rightClickToReset'],
-              axis: 'horizontal',
-              keepInBounds: true,
-              maxZoomIn: 4.0,
+      },
+      hAxis: {
+          title: 'Dates',
+          titleTextStyle: {
+              color: '#fff',
+              fontSize: 20,
           }
-      };
-      let chart = new google.charts.Line(document.getElementById('linechart_material'));
+      },
+      vAxis: {
+            minValue: 0,
+            maxValue: {{ var.high }} + (.2 * {{ var.high }}),
+            viewWindow: {
+                min: 0,
+                max: {{ var.high }} + (.2 * {{ var.high }})
+            }
+        },
+      series: {
+        0: {
+            color: '#008000',
+        }
+      },
+      backgroundColor: '#222',
+      explorer: {
+          actions: ['dragToZoom', 'rightClickToReset'],
+          axis: 'horizontal',
+          keepInBounds: true,
+          maxZoomIn: 4.0,
+      }
+  };
+  let chart = new google.charts.Line(document.getElementById('linechart_material'));
 
-          chart.draw(data, google.charts.Line.convertOptions(options));
-    }
+      chart.draw(data, google.charts.Line.convertOptions(options));
+}
 $(window).resize(function(){
 
-  day_usage_Chart();
+day_usage_Chart();
 
 });
 
 
-    </script>
-    <script id="week-usage-table" type="text/javascript">
-        google.charts.load('upcoming', {'packages':['line']});
-        google.charts.setOnLoadCallback(week_usage_Chart);
+</script>
+<script id="week-usage-table" type="text/javascript">
+    google.charts.load('upcoming', {'packages':['line']});
+    google.charts.setOnLoadCallback(week_usage_Chart);
 
-    function week_usage_Chart() {
+function week_usage_Chart() {
 
-      let data = new google.visualization.DataTable();
-      data.addColumn('date', 'Week Date');
-      data.addColumn('number', 'Usage');
-      data.addColumn('number', 'Average Usage');
+  let data = new google.visualization.DataTable();
+  data.addColumn('date', 'Week Date');
+  data.addColumn('number', 'Usage');
+  data.addColumn('number', 'Average Usage');
 
 
 {% set week_var = {'high': 0, 'var': 0} %}
-      data.addRows([
-        {% for position in range(number_of_entries.w_entries) %}
-             {% if (position + week_var.var) in week_dates and week_average[position].week_start_year == week_dates[position + week_var.var]
-             .week_start_year and week_average[position].week_start_month == week_dates[position + week_var.var].week_start_month and
-             week_average[position].week_start_day == week_dates[position + week_var.var].week_start_day %}
-                 [new Date({{ week_average[-position - 1].week_start_year }}, {{ week_average[-position - 1].week_start_month }} - 1, {{
-                 week_average[-position - 1].week_start_day}}), {{ week_dates[(week_dates|length - position - 1) + week_var.var].w_usage }},
-                     {{week_average[-position - 1]
-                 .usage }}],
-                {% if week_var.high < week_dates[position + week_var.var].w_usage %}
-                    {% set _dummy = week_var.update({'high': week_dates[position + week_var.var].w_usage}) %}
-                {% endif %}
-            {% else %}
-                 [new Date({{ week_average[-position - 1].week_start_year }}, {{ week_average[-position - 1].week_start_month }} - 1, {{
-                 week_average[-position - 1].week_start_day }}), ,{{week_average-[position - 1].usage }}],
-                {% set _dummy = week_var.update({'var': week_var.var - 1}) %}
-                {% if week_var.high < week_average[position].usage %}
-                    {% set _dummy = week_var.update({'high': week_average[position].usage}) %}
-                {% endif %}
+  data.addRows([
+    {% for position in range(number_of_entries.w_entries) %}
+         {% if (position + week_var.var) in week_dates and week_average[position].week_start_year == week_dates[position + week_var.var]
+         .week_start_year and week_average[position].week_start_month == week_dates[position + week_var.var].week_start_month and
+         week_average[position].week_start_day == week_dates[position + week_var.var].week_start_day %}
+             [new Date({{ week_average[-position - 1].week_start_year }}, {{ week_average[-position - 1].week_start_month }} - 1, {{
+             week_average[-position - 1].week_start_day}}), {{ week_dates[(week_dates|length - position - 1) + week_var.var].w_usage }},
+                 {{week_average[-position - 1].usage }}],
+            {% if week_var.high < week_dates[position + week_var.var].w_usage %}
+                {% set _dummy = week_var.update({'high': week_dates[position + week_var.var].w_usage}) %}
             {% endif %}
-        {% endfor %}
-      ]);
-      let options = {
-          chart: {
-              title: 'Weekly Usages',
-              titleTextStyle: {
-                  color: '#fff',
-              },
+        {% else %}
+             [new Date({{ week_average[-position - 1].week_start_year }}, {{ week_average[-position - 1].week_start_month }} - 1, {{
+             week_average[-position - 1].week_start_day }}), ,{{week_average[-position - 1].usage }}],
+            {% set _dummy = week_var.update({'var': week_var.var - 1}) %}
+            {% if week_var.high < week_average[position].usage %}
+                {% set _dummy = week_var.update({'high': week_average[position].usage}) %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+  ]);
+  let options = {
+      chart: {
+          title: 'Weekly Usages',
+          titleTextStyle: {
+              color: '#fff',
           },
-          hAxis: {
-              title: 'Week Dates',
-              titleTextStyle: {
-                  color: '#fff',
-                  fontSize: 20,
-              }
-          },
-          vAxis: {
-                minValue: 0,
-                maxValue: {{ week_var.high }} + (.2 * {{ week_var.high }}),
-                viewWindow: {
-                    min: 0,
-                    max: {{ week_var.high }} + (.2 * {{ week_var.high }})
-                }
-            },
-          series: {
-            0: {
-                color: '#008000',
-            }
-          },
-          backgroundColor: '#222',
-          explorer: {
-              actions: ['dragToZoom', 'rightClickToReset'],
-              axis: 'horizontal',
-              keepInBounds: true,
-              maxZoomIn: 4.0,
+      },
+      hAxis: {
+          title: 'Week Dates',
+          titleTextStyle: {
+              color: '#fff',
+              fontSize: 20,
           }
-      };
+      },
+      vAxis: {
+            minValue: 0,
+            maxValue: {{ week_var.high }} + (.2 * {{ week_var.high }}),
+            viewWindow: {
+                min: 0,
+                max: {{ week_var.high }} + (.2 * {{ week_var.high }})
+            }
+        },
+      series: {
+        0: {
+            color: '#008000',
+        }
+      },
+      backgroundColor: '#222',
+      explorer: {
+          actions: ['dragToZoom', 'rightClickToReset'],
+          axis: 'horizontal',
+          keepInBounds: true,
+          maxZoomIn: 4.0,
+      }
+  };
 
-      let chart = new google.charts.Line(document.getElementById('week-graph'));
+  let chart = new google.charts.Line(document.getElementById('week-graph'));
 
-          chart.draw(data, google.charts.Line.convertOptions(options));
-    }
-    $(window).resize(function(){
-        week_usage_Chart()
-    });
+      chart.draw(data, google.charts.Line.convertOptions(options));
+}
+$(window).resize(function(){
+    week_usage_Chart()
+});
 
-    </script>
-  </head>
-    <div style="width: 100%">
-        <form id="reloader" action="{{ url_for('show_energy_usage') }}" method="post">
-            {% if average_dates|length >= 365 %}
-                <button onclick="change_view(31, 4)" id="month-1" value="one" type="submit" class="btn btn-info" style="margin: -400px auto
-    0">1 month</button>
-                <button onclick="change_view(61, 8)" id="month-2" value="two" type="submit" class="btn btn-info" style="margin: -400px auto
-            0">2 months</button>
-                <button onclick="change_view(92, 12)" id="month-3" value="three" type="submit" class="btn btn-info" style="margin: -400px
-                auto 0">3 months</button>
-                <button onclick="change_view(183, 26)" id="month-6" value="six" type="submit" class="btn btn-info" style="margin: -400px
-                auto 0">6 months</button>
-                <button onclick="change_view(365, 52)" id="month-12" value="twelve" type="submit" class="btn btn-info" style="margin:
-                -400px auto 0">12 months</button>
-            {% elif average_dates|length >= 183 %}
-                <button onclick="change_view(31, 4)" id="month-1" value="one" type="submit" class="btn btn-info" style="margin: -400px auto
-    0">1 month</button>
-                <button onclick="change_view(61, 8)" id="month-2" value="two" type="submit" class="btn btn-info" style="margin: -400px auto
-            0">2 months</button>
-                <button onclick="change_view(92, 12)" id="month-3" value="three" type="submit" class="btn btn-info" style="margin: -400px
-                auto 0">3 months</button>
-                <button onclick="change_view(183, 26)" id="month-6" value="six" type="submit" class="btn btn-info" style="margin: -400px
-                auto 0">6 months</button>
-            {% elif average_dates|length >= 92 %}
-                <button onclick="change_view(31, 4)" id="month-1" value="one" type="submit" class="btn btn-info" style="margin: -400px auto
-    0">1 month</button>
-                <button onclick="change_view(61, 8)" id="month-2" value="two" type="submit" class="btn btn-info" style="margin: -400px auto
-            0">2 months</button>
-                <button onclick="change_view(92, 12)" id="month-3" value="three" type="submit" class="btn btn-info" style="margin: -400px
-                auto 0">3 months</button>
-            {% elif average_dates|length >= 61 %}
-                <button onclick="change_view(31, 4)" id="month-1" value="one" type="submit" class="btn btn-info" style="margin: -400px auto
-                0">1 month</button>
-                <button onclick="change_view(61, 8)" id="month-2" value="two" type="submit" class="btn btn-info" style="margin: -400px auto
-            0">2 months</button>
-            {% elif average_dates|length >= 31 %}
-                <button onclick="change_view(31, 4)" id="month-1" value="one" type="submit" class="btn btn-info" style="margin: -400px auto
-                0">1 month</button>
-            {% endif %}
-                <button id="all-time" onclick="change_view({{ average_dates|length }}, {{ week_average|length }})" type="submit" class="btn
-                btn-info" style="margin: -400px auto 0; display: none;">All Data</button>
-        </form>
+</script>
+{% endblock %}
+{% block body %}
+    <div style="width: 100%;">
+        <form id="reloader" action="{{ url_for('show_energy_usage') }}" method="post"></form>
     </div>
     <div class="carousel-container">
         <div class="carousel-custom my-carousel">
@@ -252,9 +212,10 @@ $(window).resize(function(){
         </div>
     </div>
     <div>
+        <input form="reloader" style="margin: -400px auto 0; z-index: 9999;" type="text" name="daterange" value="{{ start_date }} -
+        {{ end_date }}" />
         <button style="display: none;" id="cancel" onclick="cancel()" class="btn btn-danger">Cancel</button>
-        <button style="display: none;" id="update" onclick="update_table()" type="submit" form="update-table" class="btn btn-primary">Update
-            Table</button>
+        <button style="display: none;" id="update" onclick="update_table()" type="submit" form="update-table" class="btn btn-primary">Update Table</button>
     </div>
     <div>
         <input type="text" id="search" onkeyup="search()" placeholder="Search for dates..">
@@ -271,8 +232,6 @@ $(window).resize(function(){
                 <form id="delete-entries" action="{{ url_for('delete_entries') }}" method="post">
                     {% for position in range(dates|length) %}
                         <tr>
-{#                        Change text to input fields, make them transparent, add onkeyup listener to make table update changes to
-                            database #}
                             <td><input type="checkbox" name="child-box" value="{{ dates[position].date }}"></td>
                             <td class="text-white"><input class="d-usage" name="usage_d" type="number" onkeyup="button_appear()"
                                                           value="{{dates[position].d_usage}}"></td>
@@ -288,19 +247,17 @@ $(window).resize(function(){
 {% endblock %}
 
 {% block script %}
-    <script src="{{ url_for('static', filename='js/energy_input.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/show_usage.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/show_energy.js') }}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script type="text/javascript">
-        {% if number_of_entries.d_entries == 31 %}
-            button_hide(month_one, all_time);
-        {% elif number_of_entries.d_entries == 61 %}
-            button_hide(month_two, all_time);
-        {% elif number_of_entries.d_entries == 92 %}
-            button_hide(month_three, all_time);
-        {% elif number_of_entries.d_entries == 183 %}
-            button_hide(month_six, all_time);
-        {% elif number_of_entries.d_entries == 365 %}
-            button_hide(month_twelve, all_time);
-        {% endif %}
+        $(function() {
+          $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+          }, function(start, end) {
+            change_view_range(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+          });
+        });
     </script>
 {% endblock %}
