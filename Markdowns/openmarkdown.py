@@ -2,7 +2,6 @@ __author__ = 'DanielAjisafe'
 
 import os
 import sys
-import subprocess
 
 challenges = '/Users/danielajisafe/Energy-Project/Markdowns/challenges.md' if sys.platform == 'darwin' else \
     r'C:\Users\ajide\Energy-Project\Markdowns\challenges.md'
