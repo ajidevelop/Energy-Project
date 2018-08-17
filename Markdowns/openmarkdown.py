@@ -9,14 +9,6 @@ challenges = '/Users/danielajisafe/Energy-Project/Markdowns/challenges.md' if sy
 bugs = '/Users/danielajisafe/Energy-Project/Markdowns/bugs.md' if sys.platform == 'darwin' else r'C:\Users\ajide\Energy-Project\Markdowns\bugs.md'
 
 
-def open_file(filename):
-    if sys.platform == 'win32':
-        os.startfile(filename)
-
-    opener = 'open' if sys.platform == 'darwin' else 'xdg-open'
-    subprocess.call([opener, filename])
-
-
 def open_bugs():
     bug = open(bugs)
     for num, line in enumerate(bug, 1):
