@@ -8,7 +8,7 @@ challenges = '/Users/danielajisafe/Energy-Project/Markdowns/challenges.md' if sy
 bugs = '/Users/danielajisafe/Energy-Project/Markdowns/bugs.md' if sys.platform == 'darwin' else r'C:\Users\ajide\Energy-Project\Markdowns\bugs.md'
 
 
-def open_bugs():
+def open_bugs(where):
     bug = open(bugs)
     for num, line in enumerate(bug, 1):
         if '### Bugs to fix' in line:
@@ -16,4 +16,4 @@ def open_bugs():
     os.system(f'code -g {bugs}:{lineNumber}')
 
 
-open_bugs()
+open_bugs('')
