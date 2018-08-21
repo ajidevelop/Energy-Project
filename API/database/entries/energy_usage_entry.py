@@ -3,6 +3,7 @@ import API.database.database_connect as dc
 from API.database.database_connect import db
 import datetime
 from dateutil import relativedelta
+from calendar import monthrange
 import API.utilities.exceptions as e
 from API.utilities.important_variables import Average
 from sqlalchemy import and_
@@ -167,6 +168,53 @@ class DayUsage(db.Model):
                         WeekUsage.new_week_entry(datetime.datetime.strptime(week[0].date, '%m/%d/%y').strftime('%Y-%m-%d'), w_usage, uid)
                         w_usage = 0
 
+    @classmethod
+    def create_monthly_usage(cls, uid):
+        dates = cls.query.filter_by(uid=uid).order_by(cls.year, cls.month, cls.day).all()
+        m_usage = 0
+        for position, item in enumerate(dates):
+            month_number = int(datetime.datetime.strptime(item.date, '%m/%d/%y').strftime('%m'))
+            number_of_days = 0
+            try:
+                if int(datetime.datetime.strptime(dates[position + number_of_days].date, '%m/%d/%y').strftime('%d')) == 1:
+                    number_of_days += 1
+                    while int(datetime.datetime.strptime(dates[position + number_of_days].date, '%m/%d/%y').strftime('%m')) == month_number:
+                        number_of_days += 1
+                else:
+                    continue
+                if number_of_days == monthrange(item.year, month_number)[1]:
+                    print(monthrange(item.year, month_number)[1], number_of_days)
+                    pass
+                else:
+                    continue
+            except IndexError:
+                number_of_days = 0
+                for i in range(len(dates[position: position + monthrange(item.year, month_number)[1]])):
+                    number_of_days += 1
+            try:
+                month = []
+                for i in range(len(dates[position: position + number_of_days])):
+                    if i == 0:
+                        month.append(dates[position])
+                        m_usage += month[i].d_usage
+                        continue
+                    months = datetime.datetime.strptime(dates[position + i].date, '%m/%d/%y') \
+                             - datetime.datetime.strptime(dates[position + i - 1].date, '%m/%d/%y')
+                    if months.days == 1:
+                        month.append(dates[position + i])
+                        m_usage += month[i].d_usage
+                    else:
+                        m_usage = 0
+                        break
+            except AttributeError:
+                pass
+            else:
+                if len(month) == monthrange(item.year, month_number)[1]:
+                    MonthUsage.new_month_entry(datetime.date(month[0].year, month[0].month, month[0].day), m_usage, uid)
+                    m_usage = 0
+                else:
+                    m_usage = 0
+
 
 class WeekUsage(db.Model):
     __tablename__ = 'week_usage'
@@ -193,7 +241,7 @@ class WeekUsage(db.Model):
             return e.DayExist
         connection = dc.connectdb()
         cursor = connection.cursor()
-        sql = 'INSERT INTO `week_usage` (week_start_date, `week_start_day`, `week_start_month`, `week_start_year`, `w_usage`, `uid`) ' \
+        sql = 'INSERT INTO `week_usage` (`week_start_date`, `week_start_day`, `week_start_month`, `week_start_year`, `w_usage`, `uid`) ' \
               'VALUES (%s, %s, %s, %s, %s, %s)'
         cursor.execute(sql, (week_start_date, day, month, year, w_usage_input, uid))
         connection.close()
@@ -250,7 +298,6 @@ class WeekUsage(db.Model):
         days = {}
         for dates in range(len(find)):
             days[dates] = find[dates]
-        cls.new_monthly_usage(uid)
         return days
 
     @classmethod
@@ -470,7 +517,7 @@ if __name__ == '__main__':
     test1 = DayUsage
     test2 = MonthUsage
 
-    test.new_monthly_usage(64)
+    test1.create_monthly_usage(52)
     # test1.new_day_entry('2018-10-30', 35, 64)
     # date = datetime.datetime.strptime('1/1/18', '%m/%d/%y')
     # print(date)

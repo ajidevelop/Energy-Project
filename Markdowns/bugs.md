@@ -13,17 +13,17 @@
 
 <!-- /TOC -->
 
-## Things to do
-
-### Bugs to fix
+## Bugs to fix
 
 
 [Back to top](#todo)
 
+## Things to do
+
 ### Incorporate Costs
 
 - Add a functionality for calculating costs
-- Let users add the cost of electricty
+- Let users add the cost of electricity
 
 ### Monthly Usage
 
@@ -40,8 +40,6 @@
 - Allow range of data to be entered
 
 [Back to top](#todo)
-
-
 
 ## Tasks completed
 

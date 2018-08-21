@@ -126,7 +126,7 @@ def show_energy_usage():
     week_view = WeekUsage.view_weekly_usage(current_user.uid)
     week_average = WeekUsage.average_usage()
     date_range = request.form.get('date-range')
-    if date_range is not None:
+    if date_range is None:
         try:
             d_entries = int(request.form.get('d_entries'))
             w_entries = int(request.form.get('w_entries'))
