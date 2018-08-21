@@ -170,4 +170,4 @@ for position, item in enumerate(dates):
 MonthUsage.new_month_entry(datetime.date(month[0].year, month[0].month, 1), m_usage, uid)
 ```
 
-Originally when I used this loop idea it would include the first day of the next month into the total usage. So that every month except for January 1st was actully starting on the 2nd. This created two issues, innacurate data entries and the script raised IndexErrors because the `position + number_of_days` was eventualy went out of range.
+Originally when the function used this loop idea it would include the first day of the next month into the total usage. So that every month except for January 1st was actully starting on the 2nd. This created two issues, innacurate data entries and the script raised IndexErrors because the `position + number_of_days` was eventualy went out of range.
