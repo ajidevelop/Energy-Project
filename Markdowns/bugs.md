@@ -2,13 +2,14 @@
 
 <!-- TOC depthFrom:2 -->
 
+- [Bugs to fix](#bugs-to-fix)
 - [Things to do](#things-to-do)
-    - [Bugs to fix](#bugs-to-fix)
     - [Incorporate Costs](#incorporate-costs)
     - [Monthly Usage](#monthly-usage)
     - [Efficiency](#efficiency)
     - [Input](#input)
 - [Tasks completed](#tasks-completed)
+    - [Monthly Usage](#monthly-usage-1)
     - [Bugs Fixed](#bugs-fixed)
 
 <!-- /TOC -->
@@ -27,7 +28,7 @@
 
 ### Monthly Usage
 
-- Make monthly usage based on daily usage
+- Make a monthly usage graph for both average and monthly usage
 
 ### Efficiency
 
@@ -42,6 +43,10 @@
 [Back to top](#todo)
 
 ## Tasks completed
+
+### Monthly Usage
+
+- Make monthly usage based on daily usage
 
 [Back to top](#todo)
 

@@ -29,10 +29,28 @@ def open_bugs(where):
     os.system(f'code -g {bugs}:{lineNumber}')
 
 
-print('1. Bugs to Fix  \n2. Things to do \n3. Tasks Completed \n4. Bugs Completed')
-i = int(input(''))
-while i not in (1, 2, 3, 4):
+def open_challenges():
+    challenge = open(challenges)
+    line_number = 1
+    for num, line in enumerate(challenge, 1):
+        if line_number > num:
+            break
+        else:
+            line_number += 1
+    os.system(f'code -g {challenges}:{line_number}')
+
+print('1. Bugs and Todo List \n2. Challenges')
+i = input('')
+while int(i) not in (1, 2):
+    print('1. Bugs and Todo List \n2. Challenges')
+    i = input('')
+
+if int(i) == 1:
     print('1. Bugs to Fix  \n2. Things to do \n3. Tasks Completed \n4. Bugs Completed')
     i = int(input(''))
-
-open_bugs(i)
+    while i not in (1, 2, 3, 4):
+        print('1. Bugs to Fix  \n2. Things to do \n3. Tasks Completed \n4. Bugs Completed')
+        i = int(input(''))
+    open_bugs(i)
+else:
+    open_challenges()
