@@ -15,7 +15,7 @@
     google.charts.load('upcoming', {'packages':['line']});
     google.charts.setOnLoadCallback(day_usage_Chart);
 
-    console.log('{{ average_dates|length }}');
+    console.log('{{ start_date is string }}');
 function day_usage_Chart() {
 
   let data = new google.visualization.DataTable();
@@ -252,9 +252,10 @@ $(window).resize(function(){
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script type="text/javascript">
+    today = new Date();
         $(function() {
           $('input[name="daterange"]').daterangepicker({
-            opens: 'left'
+            opens: 'left', maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate())
           }, function(start, end) {
             change_view_range(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
           });

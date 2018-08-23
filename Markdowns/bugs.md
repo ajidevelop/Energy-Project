@@ -16,6 +16,7 @@
 
 ## Bugs to fix
 
+- #2 - Users can ask for dates that they haven't inputed and the graph breaks down
 
 [Back to top](#todo)
 
@@ -51,5 +52,7 @@
 [Back to top](#todo)
 
 ### Bugs Fixed
+
+- #1 - Users wern't able to choose a date selection
 
 [Back to top](#todo)
