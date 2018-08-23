@@ -16,8 +16,6 @@
 
 ## Bugs to fix
 
-- #2 - Users can ask for dates that they haven't inputed and the graph breaks down
-
 [Back to top](#todo)
 
 ## Things to do
@@ -52,6 +50,8 @@
 [Back to top](#todo)
 
 ### Bugs Fixed
+
+- #2 - Users can ask for dates that they haven't inputed and the graph breaks down
 
 - #1 - Users wern't able to choose a date selection
 
