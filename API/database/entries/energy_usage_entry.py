@@ -7,6 +7,8 @@ from calendar import monthrange
 import API.utilities.exceptions as e
 from API.utilities.important_variables import Average
 from sqlalchemy import and_
+import pandas as pd
+
 
 
 class DayUsage(db.Model):
@@ -26,8 +28,9 @@ class DayUsage(db.Model):
         day = datetime.datetime.strptime(date, '%m/%d/%y').strftime('%d')
         month = datetime.datetime.strptime(date, '%m/%d/%y').strftime('%m')
         year = datetime.datetime.strptime(date, '%m/%d/%y').strftime('%Y')
-        find = len(__class__.query.filter_by(uid=uid, date=date).all())
-        if find == 1:
+        find = pd.read_sql_table('day_usage', db.app.config['SQLALCHEMY_DATABASE_URI'], index_col='did')
+        f = len(find[(find['uid'] == uid) & (find['date'] == date)])
+        if f == 1:
             return e.DayExist
         connection = dc.connectdb()
         cursor = connection.cursor()
@@ -36,11 +39,14 @@ class DayUsage(db.Model):
 
     @classmethod
     def view_all_daily_usage(cls, uid):
-        find = cls.query.filter(cls.uid == uid).order_by(cls.year, cls.month, cls.day).all()
+        find = pd.read_sql_table('day_usage', db.app.config['SQLALCHEMY_DATABASE_URI'], index_col='did')
+        find.sort_values(['year', 'month', 'day'], inplace=True)
+        f = find[(find['uid'] == uid)]
         days = {}
-        for dates in range(len(find)):
-            days[dates] = find[dates]
+        for dates in range(len(f)):
+            days[dates] = DatatoClass(f, dates)
         cls.create_week_usage(uid)
+        cls.create_monthly_usage(uid)
         return days
 
     @classmethod
@@ -118,16 +124,20 @@ class DayUsage(db.Model):
             average_properties['year'] = int(datetime.datetime.strptime(date, '%m/%d/%y').strftime('%Y'))
             average_properties['date'] = datetime.date(average_properties.year, average_properties.month, average_properties.day)
         else:
+            dates = pd.read_sql_table('day_usage', db.app.config['SQLALCHEMY_DATABASE_URI'], index_col='did')
+            dates.sort_values(['year', 'month', 'day'], inplace=True)
             if start_date is not None:
                 start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').strftime('%m/%d/%y')
                 end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').strftime('%m/%d/%y')
-                dates = cls.query.filter(and_(cls.date >= start_date, cls.date <= end_date)).order_by(cls.year, cls.month, cls.day).all()
+                dates = dates[(dates['date'] >= start_date) & (dates['date'] <= end_date)]
+                # dates = cls.query.filter(and_(cls.date >= start_date, cls.date <= end_date)).order_by(cls.year, cls.month, cls.day).all()
             else:
-                dates = cls.query.order_by(cls.year, cls.month, cls.day).all()
+                pass
+                # dates = cls.query.order_by(cls.year, cls.month, cls.day).all()
             average = []
             averages = []
             for item in range(len(dates)):
-                average.append(cls.average_usage(dates[item].date))
+                average.append(cls.average_usage(dates['date'].iloc[item]))
             for i in average:
                 if i not in averages:
                     averages.append(i)
@@ -216,6 +226,28 @@ class DayUsage(db.Model):
                     m_usage = 0
 
 
+class DatatoClass:
+    def __init__(self, df, position, type='day'):
+        self.data = df
+        self.uid = df['uid'].iloc[position]
+        self.cost = df['cost'].iloc[position]
+        if type == 'week':
+            self.week_start_date = df['week_start_date'].iloc[position]
+            self.week_start_year = df['week_start_year'].iloc[position]
+            self.week_start_month = df['week_start_month'].iloc[position]
+            self.week_start_day = df['week_start_day'].iloc[position]
+            self.w_usage = df['w_usage'].iloc[position]
+        else:
+            self.date = df['date'].iloc[position]
+            self.year = df['year'].iloc[position]
+            self.month = df['month'].iloc[position]
+            self.day = df['day'].iloc[position]
+            if type == 'day':
+                self.d_usage = df['d_usage'].iloc[position]
+            elif type == 'month':
+                self.m_usage = df['m_usage'].iloc[position]
+
+
 class WeekUsage(db.Model):
     __tablename__ = 'week_usage'
     wid = db.Column(db.Integer, primary_key=True)
@@ -294,10 +326,12 @@ class WeekUsage(db.Model):
 
     @classmethod
     def view_weekly_usage(cls, uid):
-        find = cls.query.filter_by(uid=uid).order_by(cls.week_start_year, cls.week_start_month, cls.week_start_day).all()
+        find = pd.read_sql_table('week_usage', db.app.config['SQLALCHEMY_DATABASE_URI'], index_col='wid')
+        find.sort_values(['week_start_year', 'week_start_month', 'week_start_day'], inplace=True)
+        f = find[(find['uid'] == uid)]
         days = {}
-        for dates in range(len(find)):
-            days[dates] = find[dates]
+        for dates in range(len(f)):
+            days[dates] = DatatoClass(f, dates, type='week')
         return days
 
     @classmethod
@@ -342,6 +376,7 @@ class MonthUsage(db.Model):
     date = db.Column(db.Date, nullable=False)
     year = db.Column(db.Integer, nullable=False)
     month = db.Column(db.String(3), nullable=False)
+    day = db.Column(db.Integer, nullable=False, default=1)
     m_usage = db.Column(db.Integer, nullable=False)
     uid = db.Column(db.ForeignKey('users.uid'), nullable=False)
     cost = db.Column(db.Float, nullable=False)
@@ -384,7 +419,8 @@ class MonthUsage(db.Model):
                     averages.append(i)
             return averages
         else:
-            dates = cls.query.filter_by(date=month_start_date).order_by(cls.month_start_date).all()
+            dates = cls.query.filter_by(date=month_start_date).order_by(cls.month, cls.year).all()
+            average_properties['day'] = int(datetime.datetime.strptime(month_start_date, '%Y-%m-%d').strftime('%d'))
             average_properties['month'] = int(datetime.datetime.strptime(month_start_date, '%Y-%m-%d').strftime('%m'))
             average_properties['year'] = int(datetime.datetime.strptime(month_start_date, '%Y-%m-%d').strftime('%Y'))
             average_properties['date'] = datetime.datetime.strptime(month_start_date, '%Y-%m-%d').strftime('%B %Y')
@@ -517,8 +553,9 @@ if __name__ == '__main__':
     test1 = DayUsage
     test2 = MonthUsage
 
-    test1.create_monthly_usage(52)
+    # print(test1.new_day_entry(64)[0].date)
     # test1.new_day_entry('2018-10-30', 35, 64)
+    print(test.view_weekly_usage(64)[0].week_start_year)
     # date = datetime.datetime.strptime('1/1/18', '%m/%d/%y')
     # print(date)
     # for day in range(365):

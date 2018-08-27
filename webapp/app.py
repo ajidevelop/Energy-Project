@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from datetime import timedelta
-from API.database.entries.energy_usage_entry import DayUsage, WeekUsage, RandomDateRangeUsage
+from API.database.entries.energy_usage_entry import DayUsage, WeekUsage, MonthUsage, RandomDateRangeUsage
 import datetime
 
 app = ac
@@ -124,26 +124,33 @@ def show_energy_usage():
     view = DayUsage.view_all_daily_usage(current_user.uid)
     average = DayUsage.average_usage()
     week_view = WeekUsage.view_weekly_usage(current_user.uid)
+    print(week_view[0].week_start_year)
     week_average = WeekUsage.average_usage()
+    month_view = MonthUsage.view_monthly_usage(current_user.uid)
+    month_average = MonthUsage.average_usage()
     entries = request.form.get('entries')
     if entries is None:
         entries = 'all'
     start_date = request.form.get('start-date')
     end_date = request.form.get('end-date')
     if start_date is None or end_date is None:
-        start_date = datetime.datetime.today().strftime('%m/%d/%y')
-        end_date = (datetime.datetime.today() + datetime.timedelta(days=7)).strftime('%m/%d/%y')
+        start_date = (datetime.datetime.today() - datetime.timedelta(days=7)).strftime('%m/%d/%y')
+        end_date = datetime.datetime.today().strftime('%m/%d/%y')
         return render_template('show_usage.html', average_dates=average, dates=view, week_average=week_average, week_dates=week_view,
-                               loggedin=current_user.is_active, entries=entries, start_date=start_date, end_date=end_date)
+                               loggedin=current_user.is_active, entries=entries, start_date=start_date, end_date=end_date, month_dates=month_view,
+                               month_average=month_average)
     specific_view = DayUsage.view_specifc_day_usage(start_date, current_user.uid, end_date)
     specific_average_view = DayUsage.average_usage(start_date=start_date, end_date=end_date)
     specific_week_view = WeekUsage.view_specific_weekly_usage(start_date, end_date, current_user.uid)
     specific_average_week_view = WeekUsage.average_usage(start_date, end_date)
+    specific_month_view = MonthUsage.view_specific_monthly_usage(start_date, end_date, current_user.uid)
+    specific_average_monthly_view = MonthUsage.average_usage(start_date, end_date)
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').strftime('%m/%d/%y')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').strftime('%m/%d/%y')
     return render_template('show_usage.html', dates=specific_view, average_dates=specific_average_view, week_average=specific_average_week_view,
                            week_dates=specific_week_view, loggedin=current_user.is_active, entries=entries, d_entries=len(specific_average_view),
-                           w_entries=len(specific_average_week_view), start_date=start_date, end_date=end_date)
+                           w_entries=len(specific_average_week_view), m_enties=len(specific_average_monthly_view), start_date=start_date, end_date=end_date,
+                           month_dates=specific_month_view, month_average=specific_average_monthly_view)
 
 
 @app.route('/energy-usage-input', methods=['POST', 'GET'])

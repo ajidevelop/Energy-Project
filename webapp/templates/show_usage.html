@@ -3,9 +3,10 @@
 {% block title %}View Energy Usage{% endblock %}
 
 {% if entries == 'all' %}
-    {% set number_of_entries = {'d_entries': average_dates|length, 'w_entries': week_average|length} %}
+    {% set number_of_entries = {'d_entries': average_dates|length, 'w_entries':
+    week_average|length, 'm_entries': month_average|length} %}
 {% else %}
-    {% set number_of_entries = {'d_entries': d_entries, 'w_entries': w_entries} %}
+    {% set number_of_entries = {'d_entries': d_entries, 'w_entries': w_entries, 'm_entries': m_enties} %}
 {% endif %}
 
 {% block head %}
@@ -117,6 +118,8 @@ function week_usage_Chart() {
                 {% set _dummy = week_var.update({'high': week_dates[position + week_var.var].w_usage}) %}
             {% endif %}
         {% else %}
+             console.log('{{ week_dates[position + week_var.var]
+         .week_start_year }}'),
              [new Date({{ week_average[-position - 1].week_start_year }}, {{ week_average[-position - 1].week_start_month }} - 1, {{
              week_average[-position - 1].week_start_day }}), ,{{week_average[-position - 1].usage }}],
             {% set _dummy = week_var.update({'var': week_var.var - 1}) %}
@@ -171,6 +174,85 @@ $(window).resize(function(){
 });
 
 </script>
+<script id="month-usage-table" type="text/javascript">
+    google.charts.load('upcoming', {'packages':['line']});
+    google.charts.setOnLoadCallback(month_usage_Chart);
+
+function month_usage_Chart() {
+
+  let data = new google.visualization.DataTable();
+  data.addColumn('date', 'Month');
+  data.addColumn('number', 'Usage');
+  data.addColumn('number', 'Average Usage');
+
+
+{% set month_var = {'high': 0, 'var': 0} %}
+  data.addRows([
+    {% for position in range(number_of_entries.m_entries) %}
+         {% if (position + month_var.var) in month_dates and month_average[position].year == month_dates[position + month_var.var].year and
+         month_average[position].month == month_dates[position + month_var.var].month %}
+             [new Date({{ month_average[-position - 1].year }}, {{month_average[-position - 1].month }} - 1,
+                 {{month_average[-position - 1].day}}), {{ month_dates[(month_dates|length -
+             position - 1) + month_var.var].m_usage }}, {{month_average[-position - 1].usage }}],
+            {% if month_var.high < month_dates[position + month_var.var].m_usage %}
+                {% set _dummy = month_var.update({'high': month_dates[position + month_var.var]
+                .m_usage}) %}
+            {% endif %}
+        {% else %}
+             [new Date({{ month_average[-position - 1].year }}, {{ month_average[-position - 1].month }} - 1, {{
+             month_average[-position - 1].day }}), ,{{month_average[-position - 1].usage }}],
+            {% set _dummy = month_var.update({'var': month_var.var - 1}) %}
+            {% if month_var.high < month_average[position].usage %}
+                {% set _dummy = month_var.update({'high': month_average[position].usage}) %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+  ]);
+  let options = {
+      chart: {
+          title: 'Weekly Usages',
+          titleTextStyle: {
+              color: '#fff',
+          },
+      },
+      hAxis: {
+          title: 'Week Dates',
+          titleTextStyle: {
+              color: '#fff',
+              fontSize: 20,
+          }
+      },
+      vAxis: {
+            minValue: 0,
+            maxValue: {{ month_var.high }} + (.2 * {{ month_var.high }}),
+            viewWindow: {
+                min: 0,
+                max: {{ month_var.high }} + (.2 * {{ month_var.high }})
+            }
+        },
+      series: {
+        0: {
+            color: '#008000',
+        }
+      },
+      backgroundColor: '#222',
+      explorer: {
+          actions: ['dragToZoom', 'rightClickToReset'],
+          axis: 'horizontal',
+          keepInBounds: true,
+          maxZoomIn: 4.0,
+      }
+  };
+
+  let chart = new google.charts.Line(document.getElementById('month-graph'));
+
+      chart.draw(data, google.charts.Line.convertOptions(options));
+}
+$(window).resize(function(){
+    month_usage_Chart()
+});
+
+</script>
 {% endblock %}
 {% block body %}
     <div style="width: 100%;">
@@ -201,7 +283,7 @@ $(window).resize(function(){
                     <div id="week-graph" style="width: 75%; margin: 0 auto; height: 500px"></div>
                 </li>
                 <li class="carousel-slide">
-                    <h1>3</h1>
+                    <div id="month-graph" style="width: 75%; margin: 0 auto; height: 500px"></div>
                 </li>
             </div>
             <div class="carousel-indicators-custom">

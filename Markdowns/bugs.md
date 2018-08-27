@@ -4,6 +4,7 @@
 
 - [Bugs to fix](#bugs-to-fix)
 - [Things to do](#things-to-do)
+    - [Pandas](#pandas)
     - [Incorporate Costs](#incorporate-costs)
     - [Monthly Usage](#monthly-usage)
     - [Efficiency](#efficiency)
@@ -16,9 +17,16 @@
 
 ## Bugs to fix
 
+- #3 - Monthly Usage graph is out of order
+- #4 - Monthly Usage graph only shows the averege usage (index out of range starts on -1 create an if else statement to make it start on 0 if its equal to -1) 
+
 [Back to top](#todo)
 
 ## Things to do
+
+### Pandas
+
+- Create new classes that convert the panda data frames into classes
 
 ### Incorporate Costs
 
