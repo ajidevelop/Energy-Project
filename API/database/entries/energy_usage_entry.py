@@ -10,7 +10,6 @@ from sqlalchemy import and_
 import pandas as pd
 
 
-
 class DayUsage(db.Model):
     __tablename__ = 'day_usage'
     did = db.Column(db.Integer, primary_key=True)
@@ -246,6 +245,7 @@ class DatatoClass:
                 self.d_usage = df['d_usage'].iloc[position]
             elif type == 'month':
                 self.m_usage = df['m_usage'].iloc[position]
+                self.month = datetime.datetime.strptime(self.month, '%b').strftime('%m')
 
 
 class WeekUsage(db.Model):
@@ -404,16 +404,15 @@ class MonthUsage(db.Model):
     def average_usage(cls, month_start_date=None, month_end_date=None):
         average_properties = Average({'usage': 0})
         if month_end_date is not None or month_start_date is None:
+            dates = pd.read_sql_table('month_usage', db.app.config['SQLALCHEMY_DATABASE_URI'], index_col='mid')
+            dates.sort_values(['date'], inplace=True)
             if month_end_date is not None:
                 month_start_date, month_end_date = cls.isitthefirst(month_start_date, month_end_date)
                 dates = cls.query.filter(and_(cls.date >= month_start_date, cls.date <= month_end_date)).order_by(cls.month, cls.year).all()
-                print(dates)
-            else:
-                dates = cls.query.order_by(cls.month, cls.year).all()
             average = []
             averages = []
             for item in range(len(dates)):
-                average.append(cls.average_usage(str(dates[item].date)))
+                average.append(cls.average_usage(dates['date'].iloc[item].strftime('%Y-%m-%d')))
             for i in average:
                 if i not in averages:
                     averages.append(i)
@@ -433,10 +432,12 @@ class MonthUsage(db.Model):
 
     @classmethod
     def view_monthly_usage(cls, uid):
-        find = cls.query.filter_by(uid=uid).order_by(cls.year, cls.month).all()
+        find = pd.read_sql_table('month_usage', db.app.config['SQLALCHEMY_DATABASE_URI'], index_col='mid')
+        find.sort_values(['date'], inplace=True)
+        f = find[(find['uid'] == uid)]
         days = {}
-        for dates in range(len(find)):
-            days[dates] = find[dates]
+        for dates in range(len(f)):
+            days[dates] = DatatoClass(f, dates, 'month')
         return days
 
     @classmethod
@@ -555,7 +556,7 @@ if __name__ == '__main__':
 
     # print(test1.new_day_entry(64)[0].date)
     # test1.new_day_entry('2018-10-30', 35, 64)
-    print(test.view_weekly_usage(64)[0].week_start_year)
+    print(test2.average_usage())
     # date = datetime.datetime.strptime('1/1/18', '%m/%d/%y')
     # print(date)
     # for day in range(365):

@@ -190,7 +190,7 @@ function month_usage_Chart() {
   data.addRows([
     {% for position in range(number_of_entries.m_entries) %}
          {% if (position + month_var.var) in month_dates and month_average[position].year == month_dates[position + month_var.var].year and
-         month_average[position].month == month_dates[position + month_var.var].month %}
+         month_average[position].month|int == month_dates[position + month_var.var].month|int %}
              [new Date({{ month_average[-position - 1].year }}, {{month_average[-position - 1].month }} - 1,
                  {{month_average[-position - 1].day}}), {{ month_dates[(month_dates|length -
              position - 1) + month_var.var].m_usage }}, {{month_average[-position - 1].usage }}],
@@ -199,6 +199,8 @@ function month_usage_Chart() {
                 .m_usage}) %}
             {% endif %}
         {% else %}
+             console.log('{{ month_average[position].month|int == month_dates[position +
+             month_var.var].month|int }}'),
              [new Date({{ month_average[-position - 1].year }}, {{ month_average[-position - 1].month }} - 1, {{
              month_average[-position - 1].day }}), ,{{month_average[-position - 1].usage }}],
             {% set _dummy = month_var.update({'var': month_var.var - 1}) %}
@@ -210,13 +212,13 @@ function month_usage_Chart() {
   ]);
   let options = {
       chart: {
-          title: 'Weekly Usages',
+          title: 'Monthly Usages',
           titleTextStyle: {
               color: '#fff',
           },
       },
       hAxis: {
-          title: 'Week Dates',
+          title: 'Month Dates',
           titleTextStyle: {
               color: '#fff',
               fontSize: 20,

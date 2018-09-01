@@ -124,7 +124,6 @@ def show_energy_usage():
     view = DayUsage.view_all_daily_usage(current_user.uid)
     average = DayUsage.average_usage()
     week_view = WeekUsage.view_weekly_usage(current_user.uid)
-    print(week_view[0].week_start_year)
     week_average = WeekUsage.average_usage()
     month_view = MonthUsage.view_monthly_usage(current_user.uid)
     month_average = MonthUsage.average_usage()
