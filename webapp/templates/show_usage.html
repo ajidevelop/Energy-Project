@@ -118,8 +118,6 @@ function week_usage_Chart() {
                 {% set _dummy = week_var.update({'high': week_dates[position + week_var.var].w_usage}) %}
             {% endif %}
         {% else %}
-             console.log('{{ week_dates[position + week_var.var]
-         .week_start_year }}'),
              [new Date({{ week_average[-position - 1].week_start_year }}, {{ week_average[-position - 1].week_start_month }} - 1, {{
              week_average[-position - 1].week_start_day }}), ,{{week_average[-position - 1].usage }}],
             {% set _dummy = week_var.update({'var': week_var.var - 1}) %}
@@ -199,8 +197,6 @@ function month_usage_Chart() {
                 .m_usage}) %}
             {% endif %}
         {% else %}
-             console.log('{{ month_average[position].month|int == month_dates[position +
-             month_var.var].month|int }}'),
              [new Date({{ month_average[-position - 1].year }}, {{ month_average[-position - 1].month }} - 1, {{
              month_average[-position - 1].day }}), ,{{month_average[-position - 1].usage }}],
             {% set _dummy = month_var.update({'var': month_var.var - 1}) %}
@@ -210,6 +206,7 @@ function month_usage_Chart() {
         {% endif %}
     {% endfor %}
   ]);
+  console.log('{{ w_entries, m_entries }}');
   let options = {
       chart: {
           title: 'Monthly Usages',

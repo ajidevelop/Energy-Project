@@ -408,7 +408,7 @@ class MonthUsage(db.Model):
             dates.sort_values(['date'], inplace=True)
             if month_end_date is not None:
                 month_start_date, month_end_date = cls.isitthefirst(month_start_date, month_end_date)
-                dates = cls.query.filter(and_(cls.date >= month_start_date, cls.date <= month_end_date)).order_by(cls.month, cls.year).all()
+                dates = dates[(dates['date'] >= month_start_date) & (dates['date'] <= month_end_date)]
             average = []
             averages = []
             for item in range(len(dates)):
@@ -444,9 +444,9 @@ class MonthUsage(db.Model):
     def view_specific_monthly_usage(cls, start_date, end_date, uid):
         start_date, end_date = cls.isitthefirst(start_date, end_date)
         s_date_list = [int(datetime.datetime.strptime(start_date, '%Y-%m-%d').strftime('%Y')), int(datetime.datetime.strptime(start_date,
-                        '%Y-%m-%d').strftime('%m)')), int(datetime.datetime.strptime(start_date, '%Y-%m-%d').strftime('%d'))]
+                        '%Y-%m-%d').strftime('%m')), int(datetime.datetime.strptime(start_date, '%Y-%m-%d').strftime('%d'))]
         e_date_list = [int(datetime.datetime.strptime(end_date, '%Y-%m-%d').strftime('%Y')), int(datetime.datetime.strptime(end_date,
-                        '%Y-%m-%d').strftime('%m)')), int(datetime.datetime.strptime(end_date, '%Y-%m-%d').strftime('%d'))]
+                        '%Y-%m-%d').strftime('%m')), int(datetime.datetime.strptime(end_date, '%Y-%m-%d').strftime('%d'))]
         months = 0
         while s_date_list[0] != e_date_list[0] and s_date_list[1] != e_date_list[1]:
             s_date_list[1] += 1
@@ -455,7 +455,7 @@ class MonthUsage(db.Model):
                 s_date_list[1] = 1
             months += 1
         dates = {}
-        start_date = datetime.datetime.strptime(start_date, '%m/%d/%y')
+        start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
         for i in range(months):
             find = cls.query.filter_by(uid=uid, date=start_date).first()
             dates[i] = find
@@ -479,7 +479,7 @@ class MonthUsage(db.Model):
         while isitfirst != 1:
             month_start_date = (datetime.datetime.strptime(month_start_date, '%m/%d/%y') - datetime.timedelta(days=1)).strftime(
                 '%m/%d/%y')
-            isitfirst = int(datetime.datetime.strptime(month_start_date, '%m/%d/%y').strftime('%w'))
+            isitfirst = int(datetime.datetime.strptime(month_start_date, '%m/%d/%y').strftime('%d'))
             s_date = datetime.datetime.strptime(month_start_date, '%m/%d/%y')
         if month_end_date is not None:
             month_end_date = datetime.datetime.strptime(month_end_date, '%Y-%m-%d').strftime('%m/%d/%y')
@@ -490,9 +490,9 @@ class MonthUsage(db.Model):
                     '%m/%d/%y')
                 isitfirst = int(datetime.datetime.strptime(month_end_date, '%m/%d/%y').strftime('%d'))
                 e_date = datetime.datetime.strptime(month_end_date, '%m/%d/%y')
-            month_start_date = datetime.datetime.strptime(month_start_date, '%m/%d/%y').strftime('%B')
-            month_end_date = datetime.datetime.strptime(month_end_date, '%m/%d/%y').strftime('%B')
-            if special_date is not None:
+            month_start_date = datetime.datetime.strptime(month_start_date, '%m/%d/%y').strftime('%Y-%m-%d')
+            month_end_date = datetime.datetime.strptime(month_end_date, '%m/%d/%y').strftime('%Y-%m-%d')
+            if special_date is not False:
                 return month_start_date, month_end_date, s_date, e_date
             else:
                 return month_start_date, month_end_date
@@ -556,7 +556,7 @@ if __name__ == '__main__':
 
     # print(test1.new_day_entry(64)[0].date)
     # test1.new_day_entry('2018-10-30', 35, 64)
-    print(test2.average_usage())
+    print(test2.average_usage('2018-3-11', '2018-9-10'))
     # date = datetime.datetime.strptime('1/1/18', '%m/%d/%y')
     # print(date)
     # for day in range(365):
