@@ -1,0 +1,10 @@
+*.pyc
+.DS_Store
+.*.sw?
+/.pow*
+/.rvmrc
+/.rbenv-version
+.idea/*
+/webapp/configs/logins.json
+/python_console/
+/venv/

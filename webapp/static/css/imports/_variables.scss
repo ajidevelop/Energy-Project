@@ -1,0 +1,29 @@
+@mixin box-sizing($type: border-box) {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@mixin transition($what: all, $time: .2s, $how: ease-in-out) {
+  -webkit-transition: $what $time $how;
+  -moz-transition: $what $time $how;
+  -ms-transition: $what $time $how;
+  -o-transition: $what $time $how;
+  transition: $what $time $how;
+}
+
+@mixin transform($val1, $val2) {
+  -webkit-transform: scale($val1, $val2);
+  -moz-transform: scale($val1, $val2);
+  -ms-transform: scale($val1, $val2);
+  -o-transform: scale($val1, $val2);
+  transform: scale($val1, $val2);
+}
+
+@mixin animation($animation, $time: .6s) {
+  -webkit-animation: $animation $time;
+  -o-animation: $animation $time;
+  animation: $animation $time;
+}
+
+$background: #55d6aa;

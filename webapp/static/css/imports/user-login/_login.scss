@@ -1,0 +1,157 @@
+@import "../variables";
+
+#create-account-form, #verification-form, #resend-verification-form, #tmp-message {
+  display: none;
+}
+
+.create-button {
+  transform: perspective(1px) translateY(-10%);
+}
+
+.login-input {
+  &[type=text], &[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    @include box-sizing();
+  }
+}
+
+.login-button {
+  background-color: $background;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+
+  &:hover {
+    opacity: .8;
+  }
+}
+
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+img.avatar {
+  width: 30%;
+  border-radius: 50%;
+}
+
+.login-container {
+  padding: 16px;
+}
+
+span.psw {
+  float: right;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding-top: 60px;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 3% auto 15% auto;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 750px;
+}
+
+.close {
+  position: absolute;
+  right: 20px;
+  top: 0;
+  color: #000;
+  font: {
+    size: 35px;
+    weight: bold;
+  }
+
+  &:hover, &:focus {
+    color: red;
+    cursor: pointer;
+  }
+}
+
+.wrongpsw {
+  color: red;
+  font-size: 14px;
+  padding: 1.5%;
+  text-align: center;
+}
+
+.animate {
+  @include animation(animatezoom);
+  
+  @-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)}
+    to {-webkit-transform: scale(1)}
+    }
+
+  @-o-keyframes animatezoom {
+    from {-o-transform: scale(0)}
+    to {-o-transform: scale(1)}
+  }
+
+  @keyframes animatezoom {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
+  }
+}
+
+.wrongpsw-animate {
+  @include animation(shake, .25s);
+  -webkit-animation-direction: alternate;
+  -moz-animation-direction: alternate;
+  -o-animation-direction: alternate;
+  animation-direction: alternate;
+  animation-iteration-count: 2;
+
+  @-webkit-keyframes shake {
+    0% {-webkit-transform: translateX(0)}
+    25% {-webkit-transform: translateX(15px)}
+    50% {-webkit-transform: translateX(0)}
+    75% {-webkit-transform: translateX(-15px)}
+    100% {-webkit-transform: translateX(0px)}
+  }
+
+  @-o-keyframes shake {
+    0% {-o-transform: translateX(0)}
+    25% {-o-transform: translateX(15px)}
+    50% {-o-transform: translateX(0)}
+    75% {-o-transform: translateX(-15px)}
+    100% {-o-transform: translateX(0px)}
+  }
+
+  @keyframes shake {
+    0% {transform: translateX(0)}
+    25% {transform: translateX(15px)}
+    50% {transform: translateX(0)}
+    75% {transform: translateX(-15px)}
+    100% {transform: translateX(0px)}
+  }
+}
+
+@media screen and (max-width: 300px) {
+    span.psw {
+       display: block;
+       float: none;
+    }
+}

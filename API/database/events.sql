@@ -1,0 +1,19 @@
+alter EVENT expireuser
+ON SCHEDULE EVERY 30 MINUTE
+DO
+DELETE FROM verification
+WHERE TIMESTAMPDIFF(HOUR, ts_create , NOW()) > 24
+;
+
+ALTER EVENT expirenouser
+ON SCHEDULE EVERY 12 HOUR
+DO
+DELETE FROM users 
+WHERE TIMESTAMPDIFF(DAY, user_since , NOW()) > 7 AND verified = 'N'
+;
+
+CREATE EVENT `logoffuser`
+ON SCHEDULE EVERY 1 DAY
+DO
+DELETE FROM user_logged_in
+WHERE TIMESTAMPDIFF(DAY, time_logged_in, NOW() > 7)

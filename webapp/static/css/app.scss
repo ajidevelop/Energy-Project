@@ -1,0 +1,23 @@
+@import "imports/navbar";
+@import "imports/user-login/login";
+@import "imports/table";
+@import "imports/carousel";
+
+body {
+  background: #222;
+  font: {
+    family: 'Works Sans', sans-serif;
+    weight: 400;
+  }
+  display: grid;
+  margin: 300px 0 0 0;
+}
+
+p {
+  font-size: 10px;
+  color: #0069d9;
+}
+
+h1 {
+  color: #000;
+}

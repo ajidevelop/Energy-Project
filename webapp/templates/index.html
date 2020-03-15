@@ -1,0 +1,195 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+    Login
+{% endblock %}
+
+
+
+{% block body %}
+
+{#  Verification Ends   #}
+{#  Login Start    #}
+    {% if loggedin == True %}
+        <form action="{{ url_for('logout') }}" method="post" id="logout-form"></form>
+    {% else %}
+        <div id="modal" class="modal">
+{#            Login UI  #}
+            <form id="login-form" class="modal-content animate" action="{{ url_for('login') }}" method="post">
+                <div class="imgcontainer">
+                    <span onclick="document.getElementById('modal').style.display='none'" class="close" title="Close Login">&times;
+                    </span>
+                    <img src="{{ url_for('static', filename='assets/avatar.png') }}" alt="Avatar" class="avatar">
+                    {# TODO - REMOVE PICTURE IT DIDNT COME FROM ME #}
+                </div>
+
+                <div id="logon">
+                    <div class="login-container">
+                        <label for="username"><b>Username</b></label>
+                        <input type="text" placeholder="Enter Username" name="username" class="login-input" required>
+
+                        <label for="password"><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="password" class="login-input" required>
+
+                        {% if wrong_credentials == True %}
+                            <p class="wrongpsw">{{ text }}</p>
+                        {% endif %}
+
+                        <button type="submit" class="login-button">Login</button>
+
+                        <label>
+                            <input id="remember-me" type="checkbox" checked="checked" name="remember"> Remember me
+                        </label>
+                    </div>
+
+                    <div class="login-container" style="background-color:#f1f1f1">
+                        <button type="button" onclick="change_modal_form(create_account_form)" class="btn btn-primary create-button">Create
+                            Account</button>
+                        <span class="psw"><a href="#">Forgot password?</a></span>
+                    </div>
+                </div>
+            </form>
+{#            Create User UI    #}
+            <form id="create-account-form" class="modal-content" action="{{ url_for('create_user') }}" method="post">
+                <div class="imgcontainer">
+                    <span onclick="document.getElementById('modal').style.display='none'" class="close" title="Close Login">&times;
+                    </span>
+                </div>
+
+                <div class="login-container">
+
+                    <label for="fName" style="padding-right: 39%"><b>First Name</b></label>
+                    <label for="lName"><b>Last Name</b></label>
+
+                     <div>
+                        <input type="text" placeholder="First Name" name="fName" class="login-input" required style="width: 49%; float:
+                        left;">
+                        <input type="text" placeholder="Last Name" name="lName" class="login-input" required style="width: 49%; float:
+                        right;">
+                    </div>
+
+                    <label for="username-new"><b>Username</b></label>
+                    <input type="text" placeholder="Username" name="username-new" class="login-input">
+                    {% if u_taken == True %}
+                        <p class="wrongpsw">{{ text }}</p>
+                    {% endif %}
+
+                    <label for="password-new"><b>Password</b></label>
+                    <input type="password" placeholder="Password" name="password-new" class="login-input">
+
+                    <label for="password-retype"><b>Re-enter your password</b></label>
+                    <input type="password" placeholder="Password" name="password-retype" class="login-input">
+                    {% if p_match == True %}
+                        <p class="wrongpsw">Passwords don't match</p>
+                    {% endif %}
+
+                    <label for="email"><b>Email</b></label>
+                    <input type="text" placeholder="Email" name="email" class="login-input">
+
+                    <label for="email-retype"><b>Re-enter your email</b></label>
+                    <input type="text" placeholder="Email" name="email-retype" class="login-input">
+                    {% if e_match == True %}
+                        <p class="wrongpsw">Emails don't match</p>
+                    {% elif e_taken == True %}
+                        <p class="wrongpsw">{{ text }}</p>
+                    {% elif i_email == True %}
+                        <p class="wrongpsw">{{ text }}</p>
+                    {% endif %}
+
+                    <button type="submit" class="login-button">Create Account</button>
+                </div>
+
+                <div class="login-container" style="background-color:#f1f1f1">
+                    <button type="button" onclick="go_back(create_account_form)" class="btn btn-primary create-button">Go Back</button>
+                </div>
+            </form>
+{#            Verification  #}
+            <form id="verification-form" class="modal-content" action="{{ url_for('verify') }}" method="post">
+                <div>
+                    <div class="imgcontainer">
+                        <span onclick="document.getElementById('modal').style.display='none'" class="close" title="Close Login">&times;
+                        </span>
+                    </div>
+
+                    <div class="login-container">
+                        <label for="token"><b>Enter your verification code</b></label>
+                        <input type="text" placeholder="Verification Code" name="token" class="login-input" required>
+                        {% if w_verification == True %}
+                            <p class="wrongpsw">{{ text }}</p>
+                        {% endif %}
+
+                        <button type="submit" class="login-button">Check Verification Code</button>
+                    </div>
+
+                    <div class="login-container" style="background-color:#f1f1f1">
+                        <button type="button" onclick="go_back(verification_form)" class="btn btn-primary create-button">Go Back</button>
+                        <span class="psw"><button class="btn-primary btn create-button" onclick="go_back(verification_form, resend_verification_form)
+">Resend
+                            Code?</button></span>
+                    </div>
+                </div>
+            </form>
+{#            Resemd Verification Code  #}
+            <form id="resend-verification-form" class="modal-content" action="{{ url_for('resend') }}" method="post">
+                <div>
+                    <div class="imgcontainer">
+                        <span onclick="document.getElementById('modal').style.display='none'" class="close" title="Close Login">&times;
+                        </span>
+                    </div>
+
+                    <div class="login-container">
+                        <label for="verification-code"><b>Enter your Email</b></label>
+                        <input type="text" placeholder="Email" name="email-code" class="login-input" required>
+                    <div style="align-content: center">
+                        {% if n_system == True %}
+                            <p class="wrongpsw">{{ text }}</p>
+                        {% endif %}
+                    </div>
+
+
+                        <button type="submit" class="login-button">Send Verification Code</button>
+                    </div>
+
+                    <div class="login-container" style="background-color:#f1f1f1">
+                        <button type="submit" onclick="go_back(resend_verification_form, verification_form)" class="btn
+                        btn-primary create-button">Go Back</button>
+                        <button type="submit" onclick="go_back(resend_verification_form, create_account_form)"
+                                class="create-button btn btn-primary" style="float: right">Create Account</button>
+                    </div>
+                </div>
+            </form>
+{#            Temp Message  #}
+            <div id="tmp-message" class="modal-content">
+                <div class="imgcontainer">
+                    <span onclick="document.getElementById('modal').style.display='none'" class="close" title="Close Login">&times;
+                    </span>
+                    <img src="{{ url_for('static', filename='assets/checkmark.png') }}" class="avatar">
+                    {# TODO - REMOVE PICTURE IT DIDNT COME FROM ME #}
+                </div>
+                <div class="login-container">
+                    <h1 style="text-align: center">{{ text }}</h1>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{#  Login Ends  #}
+
+{% endblock %}
+
+{% block script %}
+    {% if wrong_credentials == True %}
+        <script>reload(login_form)</script>
+    {% elif taken == True %}
+        <script>reload(create_account_form)</script>
+    {% elif i_email == True %}
+        <script>reload(create_account_form)</script>
+    {% elif verification == True %}
+        <script>change_modal_form(verification_form)</script>
+    {% elif w_verification == True %}
+        <script>reload(verification_form)</script>
+    {% elif n_system == True %}
+        <script>reload(resend_verification_form)</script>
+    {% elif tmp_message == True %}
+        <script>change_modal_form(temp_message)</script>
+    {% endif %}
+{% endblock %}

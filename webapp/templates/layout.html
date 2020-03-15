@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/app.css') }}">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    {% block head %}
+    {% endblock %}
+    </head>
+    <body>
+{#  NavBar starts  #}
+{% if loggedin == True %}
+    {% set loginButton = 'logout-form' %}
+    {% set buttonText = 'Logout' %}
+    <form action="{{ url_for('logout') }}" method="post" id="logout-form"></form>
+{% else %}
+    {% set loginstyle = 'width:auto;' %}
+    {% set loginButton = 'login-form' %}
+    {% set buttonText = 'Login' %}
+{% endif %}
+        <header>
+            <h1 class="logo">Logo</h1>
+            <input type="checkbox" id="nav-toggle" class="nav-toggle">
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}" methods="POST">Home</a></li>
+                    <li><a href="{{ url_for('energy_usage_input') }}">Enter Usage</a></li>
+                    <li><a href="{{ url_for('show_energy_usage') }}">Show Usage</a></li>
+                    <li><button id="login-logout" onclick="load()" style="{{ loginstyle }}"
+                                class="transparent-button" form="{{ loginButton }}">{{ buttonText }}</button></li>
+                </ul>
+            </nav>
+            <label for="nav-toggle" class="nav-toggle-label">
+                <span></span>
+            </label>
+        </header>
+{#  NavBar ends#}
+        <div>
+            {% block body %}
+            {% endblock %}
+        </div>
+    </body>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+    {% block script %} {% endblock %}
+</html>
