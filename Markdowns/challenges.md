@@ -3,7 +3,6 @@
 
 - [Monthly Usage based on Weekly Usage](#monthly-usage-based-on-weekly-usage)
     - [Solution Fixed - 8/16/18](#solution-fixed---81618)
-        - [Update - 8/21/18](#update---82118)
     - [Problem - 8/15/18](#problem---81518)
 - [Monthly Usage was inaccurate](#monthly-usage-was-inaccurate)
     - [Solution Fixed - 8/21/18](#solution-fixed---82118)
@@ -16,8 +15,6 @@
 ### Solution Fixed - 8/16/18
 
 Removed it from program and used some of this code block to build a similar function based on daily occurrences
-
-#### Update - 8/21/18
 
 ```python
 @classmethod
