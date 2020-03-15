@@ -108,13 +108,17 @@ class Verification(db.Model):
             raise mye.NoEmail
 
 
-def connectdb():
+def connectdb(admin=False):
     # Connect to the database
-    connection = pymysql.connect(host=ac.uri['admin_login']['host'],
-                                 port=ac.uri['admin_login']['port'],
-                                 user=ac.uri['admin_login']['username'],
-                                 password=ac.uri['admin_login']['password'],
-                                 db=ac.uri['admin_login']['db'],
+    if admin:
+        db_info = ac.uri['admin_login']
+    else:
+        db_info = ac.uri['public_login']
+    connection = pymysql.connect(host=db_info['host'],
+                                 port=db_info['port'],
+                                 user=db_info['username'],
+                                 password=db_info['password'],
+                                 db=db_info['db'],
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor,
                                  autocommit=True)
