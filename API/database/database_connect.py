@@ -3,14 +3,12 @@ import API.User.email_verification as ev
 from argon2 import exceptions as e
 import API.utilities.exceptions as mye
 from argon2 import PasswordHasher
-ph = PasswordHasher()
-
-# Flask Support
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 import webapp.app_config as ac
 from flask_login import UserMixin
 
+ph = PasswordHasher()
 db = SQLAlchemy(ac.app)
 
 
@@ -19,8 +17,10 @@ class Users(db.Model, UserMixin):
     uid = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    firstname = db.Column(db.String(255), nullable=False)
+    lastname = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    verified = db.Column(db.String(1), nullable=False)
+    verified = db.Column(db.Boolean, nullable=False, default=False)
     user_since = db.Column(db.TIMESTAMP, default=datetime.datetime.today(), nullable=False)
 
     def get_id(self):
@@ -110,11 +110,11 @@ class Verification(db.Model):
 
 def connectdb():
     # Connect to the database
-    connection = pymysql.connect(host='GOSHEN-SPECTRE',
-                                 port=3307,
-                                 user='python',
-                                 password='pyth0n_@ccess',
-                                 db='db',
+    connection = pymysql.connect(host=ac.uri['admin_login']['host'],
+                                 port=ac.uri['admin_login']['port'],
+                                 user=ac.uri['admin_login']['username'],
+                                 password=ac.uri['admin_login']['password'],
+                                 db=ac.uri['admin_login']['db'],
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor,
                                  autocommit=True)
@@ -128,8 +128,8 @@ def _new_user(u, p, email, fName, lName):
     try:
         with connection.cursor() as cursor:
             # Create a new record
-            sql = "INSERT INTO `users` (`username`, `password`, `email`, `fName`, `lName`, `verified`) VALUES (%s, %s, %s, %s, %s, %s)"
-            cursor.execute(sql, (u, p, email, fName, lName, 'N'))
+            sql = "INSERT INTO `users` (`username`, `password`, `email`, `firstname`, `lastname`) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(sql, (u, p, email, fName, lName))
             token = ev.send_verification_email(email)
             sql = "INSERT INTO `verification` (`uid`, `email`, `token`) VALUES (%s, %s, %s)"
             cursor.execute(sql, (Users.find_user(u), email, token))
@@ -146,10 +146,7 @@ def _check_verification(u, email=False):
     cursor.execute(sql, result)
     result = cursor.fetchone()['verified']
     try:
-        if result == 'N':
-            return False
-        elif result == 'Y':
-            return True
+        return result
     finally:
         connection.close()
 
@@ -185,10 +182,10 @@ def _email_verified(email, token=None):
         sql1 = "SELECT `email` FROM `verification` WHERE `token`=%s"
         cursor.execute(sql1, token)
         email = cursor.fetchone()['email']
-        sql = "UPDATE `users` SET `verified`='Y' WHERE `email`=%s"
+        sql = "UPDATE `users` SET `verified`=True WHERE `email`=%s"
         result = cursor.execute(sql, email)
     else:
-        sql = "UPDATE `users` SET `verified`='Y' WHERE `email`=%s"
+        sql = "UPDATE `users` SET `verified`=True WHERE `email`=%s"
         result = cursor.execute(sql, email)
     try:
         if result == 1:
@@ -223,6 +220,4 @@ def _logoff(uid):
 
 
 if __name__ == '__main__':
-    testUser = Users()
-    verify = Verification()
-    print(testUser.returning_user('test', 'test'))
+    db.create_all()

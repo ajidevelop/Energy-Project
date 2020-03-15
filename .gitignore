@@ -5,3 +5,6 @@
 /.rvmrc
 /.rbenv-version
 .idea/*
+/webapp/configs/logins.json
+/python_console/
+/venv/

@@ -15,7 +15,7 @@ import datetime
 
 app = ac
 
-engine = create_engine("mysql+pymysql://python:pyth0n_@ccess@GOSHEN-SPECTRE:3307/db")
+engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 db = scoped_session(sessionmaker(bind=engine))
 login_manager = LoginManager()
 login_manager.init_app(app)

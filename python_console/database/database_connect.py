@@ -2,16 +2,15 @@ import pymysql.cursors
 import python_console.User.email_verification as ev
 from argon2 import exceptions as e
 from argon2 import PasswordHasher
-ph = PasswordHasher()
-
-# Flask Support
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import datetime
+import json
+
+ph = PasswordHasher()
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://python:pyth0n_@ccess@GOSHEN-SPECTRE:3307/db'
 app.secret_key = 'toyin'
 db = SQLAlchemy(app)
 
@@ -87,7 +86,7 @@ class Verification(db.Model):
 def connectdb():
     # Connect to the database
     connection = pymysql.connect(host='GOSHEN-SPECTRE',
-                                 port=3307,
+                                 port=3306,
                                  user='python',
                                  password='pyth0n_@ccess',
                                  db='db',

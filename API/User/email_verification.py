@@ -4,6 +4,7 @@ import smtplib
 import secrets
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import webapp.app_config as ac
 
 
 def verify_email(email):
@@ -13,7 +14,7 @@ def verify_email(email):
 
 
 def send_verification_email(e):
-    email = "noreply.energysaver@gmail.com"
+    email = ac.uri['email']['username']
     token = generate_token()
     msg = MIMEMultipart()
     msg['From'] = email
@@ -24,7 +25,7 @@ def send_verification_email(e):
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
-    server.login(email, "energys@ver")
+    server.login(email, ac.uri['email']['password'])
     text = msg.as_string()
     server.sendmail(email, e, text)
     server.quit()

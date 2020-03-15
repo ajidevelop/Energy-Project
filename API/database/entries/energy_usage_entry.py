@@ -549,28 +549,4 @@ class RandomDateRangeUsage(db.Model):
 
 
 if __name__ == '__main__':
-    new_user = RandomDateRangeUsage
-    test = WeekUsage
-    test1 = DayUsage
-    test2 = MonthUsage
-
-    # print(test1.new_day_entry(64)[0].date)
-    # test1.new_day_entry('2018-10-30', 35, 64)
-    print(test2.average_usage('2018-3-11', '2018-9-10'))
-    # date = datetime.datetime.strptime('1/1/18', '%m/%d/%y')
-    # print(date)
-    # for day in range(365):
-    #     date = date.strftime('%Y-%m-%d')
-    #     test1.new_day_entry(date, random.randrange(10, 50), 52)
-    #     date = datetime.datetime.strptime(date, '%Y-%m-%d')
-    #     date = date + datetime.timedelta(days=1)
-    #     print(date)
-    # print(test1.view_specifc_day_usage('2018-11-10', 64, end_date='2018-12-11'))
-
-    # print(test1.view_all_daily_usage(64))
-    # print(test1.average_usage(str(test1.average_usage()[0].date)))
-    # print(test.new_week_entry(datetime.date(2018, 6, 2), 70, 64))
-
-    # print(new_user.new_entry('06/02/18', '06/05/18', 20, 64))
-    # for pos in range(len(new_user.view_all_daily_usage(64))):
-    #     print(f'You used {new_user.view_all_daily_usage(64)[pos].d_usage} on {new_user.view_all_daily_usage(64)[pos].year}')
+    dc.db.create_all()
