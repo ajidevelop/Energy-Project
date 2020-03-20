@@ -1,17 +1,15 @@
 from API.User.login import check_user, create_user as cu
 import API.User.login as lo
-import API.utilities.exceptions as e
-import API.utilities.strings as s
+from API.utilities import exceptions as e, strings as s
 from API.database.database_connect import Users as dcU, Verification as dcV
-# from . import app as ac
 from webapp.app_config import app as ac
 from flask import render_template, request, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from datetime import timedelta
 from API.database.entries.energy_usage_entry import DayUsage, WeekUsage, MonthUsage, RandomDateRangeUsage
-import datetime
+from datetime import datetime, timedelta
+
 
 app = ac
 
@@ -133,8 +131,8 @@ def show_energy_usage():
     start_date = request.form.get('start-date')
     end_date = request.form.get('end-date')
     if start_date is None or end_date is None:
-        start_date = (datetime.datetime.today() - datetime.timedelta(days=7)).strftime('%m/%d/%y')
-        end_date = datetime.datetime.today().strftime('%m/%d/%y')
+        start_date = (datetime.today() - timedelta(days=7)).strftime('%m/%d/%y')
+        end_date = datetime.today().strftime('%m/%d/%y')
         return render_template('show_usage.html', average_dates=average, dates=view, week_average=week_average, week_dates=week_view,
                                loggedin=current_user.is_active, entries=entries, start_date=start_date, end_date=end_date, month_dates=month_view,
                                month_average=month_average)
@@ -144,8 +142,8 @@ def show_energy_usage():
     specific_average_week_view = WeekUsage.average_usage(start_date, end_date)
     specific_month_view = MonthUsage.view_specific_monthly_usage(start_date, end_date, current_user.uid)
     specific_average_monthly_view = MonthUsage.average_usage(start_date, end_date)
-    start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').strftime('%m/%d/%y')
-    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').strftime('%m/%d/%y')
+    start_date = datetime.strptime(start_date, '%Y-%m-%d').strftime('%m/%d/%y')
+    end_date = datetime.strptime(end_date, '%Y-%m-%d').strftime('%m/%d/%y')
     return render_template('show_usage.html', dates=specific_view, average_dates=specific_average_view, week_average=specific_average_week_view,
                            week_dates=specific_week_view, loggedin=current_user.is_active, entries=entries, d_entries=len(specific_average_view),
                            w_entries=len(specific_average_week_view), m_enties=len(specific_average_monthly_view), start_date=start_date, end_date=end_date,
