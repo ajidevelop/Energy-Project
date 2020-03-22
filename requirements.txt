@@ -1,3 +1,5 @@
+selenium
+beautifulsoup4
 matplotlib
 numpy
 flask
@@ -9,3 +11,5 @@ sqlalchemy
 PyMySql
 tensorflow
 pandas
+lxml
+html5lib

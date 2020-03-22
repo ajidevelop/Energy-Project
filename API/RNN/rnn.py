@@ -17,18 +17,25 @@ def build_dataset():
 
     df = pd.DataFrame()
     for file in os.listdir(os.path.join(RNN, 'data')):
+        if 'temp' in file:
+            continue
         df1 = pd.read_csv(RNN + '\\data\\' + file)
         df = df.append(df1, ignore_index=True)
-    df = df[(df != 0).all(1)]  # remove rows with all zeros in dataframe
+
+    df1 = pd.read_csv(RNN + '\\data\\temp_nov-mar.csv')
+    df = pd.merge(df1.iloc[:, 1:], df, on='DateTime')
+
+    df = df.loc[df['This Month'] != 0]  # remove rows with all zeros in dataframe
     df = df.sort_values(df.columns[0], ascending=True)
 
     TRAIN_SPLIT = int(np.ceil(TRAIN_SPLIT * len(df)))
     return df
 
 
-df = build_dataset()
-features = df[['Last Month', 'This Month']]
-features.index = df['DateTime']
+all_data = build_dataset()
+features = ['Temp', 'Wind', 'Humidity', 'Barometer', 'Visibility', 'Last Month', 'This Month']
+features = all_data[features]
+features.index = all_data['DateTime']
 features.plot(subplots=True)
 # plt.show()
 
